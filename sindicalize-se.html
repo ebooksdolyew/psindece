@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="format-detection" content="telephone=no">
 <meta name="theme-color" content="#821A25">
-<title>Sobre — Sindicato dos Psicólogos do Ceará</title>
-<meta name="description" content="Conheça a missão, as filiações e a equipe do PSINDCE — Sindicato dos Psicólogos do Estado do Ceará.">
+<title>Sindicalize-se — Sindicato dos Psicólogos do Ceará</title>
+<meta name="description" content="Sindicalize-se ao PSINDCE e garanta assistência jurídica, negociação coletiva e convênios exclusivos para psicólogos e psicólogas do Ceará.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
@@ -345,58 +345,63 @@
     *,*::before,*::after{transition-duration:.01ms!important;animation-duration:.01ms!important}
   }
 
-  /* --- SOBRE: página própria --- */
+  /* --- SINDICALIZE-SE: página própria --- */
   nav a[aria-current="page"]{color:var(--accent);border-bottom-color:var(--accent)}
 
-  .sobre-hero{
+  .sind-hero{
     padding:5.5rem 0 3rem;text-align:left;border-bottom:1px solid var(--border);
   }
-  .sobre-hero .rotulo{margin-bottom:1.25rem}
-  .sobre-hero h1{max-width:40rem}
-  .sobre-hero .lead{max-width:40rem;margin-top:1.25rem}
+  .sind-hero .rotulo{margin-bottom:1.25rem}
+  .sind-hero h1{max-width:40rem}
+  .sind-hero .lead{max-width:40rem;margin-top:1.25rem}
 
-  .filiacoes-lista{
-    display:flex;flex-wrap:wrap;gap:.75rem;margin:1.75rem 0 2rem;
-  }
-  .filiacoes-lista li{
-    list-style:none;background:var(--card);border:1px solid var(--border);
-    border-radius:999px;padding:.5rem 1.125rem;font-size:.875rem;font-weight:700;
-    color:var(--verde);font-family:var(--font-display);letter-spacing:.01em;
-  }
-
-  /* --- EQUIPE --- */
-  .equipe-grid{
+  /* --- VANTAGENS --- */
+  .vantagens-grid{
     display:grid;grid-template-columns:repeat(3,1fr);gap:2rem;margin-top:3.25rem;
   }
-  .membro{
+  .vantagem{
     background:var(--card);border:1px solid var(--border);border-top:4px solid var(--accent);
-    border-radius:14px;padding:2rem 1.75rem;text-align:center;
+    border-radius:14px;padding:2.25rem 1.75rem;
     box-shadow:var(--shadow-sm);transition:all .2s ease-out;
   }
-  .membro:hover{box-shadow:var(--shadow-md);border-color:var(--border-hover)}
-  .membro-avatar{
-    width:4rem;height:4rem;margin:0 auto 1.125rem;border-radius:50%;
-    background:var(--accent-soft);color:var(--accent);
+  .vantagem:hover{box-shadow:var(--shadow-md);border-color:var(--border-hover)}
+  .vantagem-icone{
+    width:3.5rem;height:3.5rem;margin-bottom:1.25rem;border-radius:50%;
+    background:var(--accent-soft);
     display:flex;align-items:center;justify-content:center;
-    font-family:var(--font-display);font-weight:800;font-size:1.25rem;
   }
-  .membro-cargo{
-    font-family:var(--font-display);font-size:.75rem;font-weight:700;letter-spacing:.1em;
-    text-transform:uppercase;color:var(--accent);margin-bottom:.5rem;
-  }
-  .membro h3{margin-bottom:.375rem}
-  .membro-crp{font-size:.875rem;color:var(--muted-foreground)}
+  .vantagem-icone svg{width:1.75rem;height:1.75rem;stroke:var(--accent);fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+  .vantagem h3{margin-bottom:.625rem}
+  .vantagem p{font-size:.9375rem;color:var(--muted-foreground)}
 
-  .fiscal-grid{
-    display:grid;grid-template-columns:repeat(2,1fr);gap:2rem;margin-top:2.5rem;
-    max-width:40rem;margin-left:auto;margin-right:auto;
+  /* --- CAIXA DE DESTAQUE --- */
+  .caixa{
+    background:var(--card);border:1px solid var(--border);border-left:4px solid var(--accent);
+    border-radius:14px;padding:2rem 2.25rem;box-shadow:var(--shadow-sm);margin-top:2.5rem;
   }
+  .caixa p{color:var(--muted-foreground)}
+  .caixa p+p{margin-top:.875rem}
+
+  /* --- CONVÊNIOS --- */
+  .convenios-grid{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem;margin-top:3rem;
+  }
+  .convenio{
+    background:var(--card);border:1px solid var(--border);border-radius:14px;
+    padding:1.75rem 1.25rem;text-align:center;box-shadow:var(--shadow-sm);
+    transition:all .2s ease-out;
+  }
+  .convenio:hover{box-shadow:var(--shadow-md);border-color:var(--border-hover)}
+  .convenio h3{font-size:1rem}
+  .convenio-sub{font-size:.875rem;color:var(--muted-foreground);margin-top:.25rem}
 
   @media(max-width:900px){
-    .equipe-grid{grid-template-columns:repeat(2,1fr)}
+    .vantagens-grid{grid-template-columns:1fr}
+    .convenios-grid{grid-template-columns:repeat(2,1fr)}
   }
   @media(max-width:640px){
-    .equipe-grid,.fiscal-grid{grid-template-columns:1fr}
+    .convenios-grid{grid-template-columns:1fr}
+    .caixa{padding:1.75rem}
   }
 </style>
 </head>
@@ -412,9 +417,9 @@
     <nav id="nav">
       <ul>
         <li><a href="index.html#topo">Página inicial</a></li>
-        <li><a href="sobre.html" aria-current="page">Sobre</a></li>
+        <li><a href="sobre.html">Sobre</a></li>
         <li><a href="historia.html">História</a></li>
-        <li><a href="sindicalize-se.html">Sindicalize-se</a></li>
+        <li><a href="sindicalize-se.html" aria-current="page">Sindicalize-se</a></li>
       </ul>
     </nav>
     <a class="tel-topo" href="tel:+558532710277">(85) 3271-0277</a>
@@ -423,95 +428,94 @@
 
 <main>
 
-<section class="sobre-hero" id="topo">
+<section class="sind-hero" id="topo">
   <div class="wrap">
-    <div class="rotulo"><span>Quem somos</span></div>
-    <h1>Sobre o <em>PSINDCE</em></h1>
-    <p class="lead">Conheça a missão, as filiações e a equipe que representa a categoria dos psicólogos e psicólogas do Ceará.</p>
+    <div class="rotulo"><span>Faça parte</span></div>
+    <h1>Sindicalize-se!</h1>
+    <p class="lead">Junte-se a nós e garanta seus direitos trabalhistas.</p>
+    <p style="margin-top:1.125rem;max-width:40rem">E passe a garantir plenos direitos e deveres de sindicalizado, incluindo o acesso a todos os serviços e convênios disponíveis. Os valores para a sindicalização são decididos em assembleia orçamentária, realizada anualmente.</p>
+    <div class="btns">
+      <a class="btn btn-primary" href="https://www.sympla.com.br/psindce-20241-resistencia__2417666" target="_blank" rel="noopener">Preencher formulário de sindicalização</a>
+    </div>
   </div>
 </section>
 
 <section>
-  <div class="wrap">
-    <div class="rotulo esq"><span>Nossa missão</span></div>
-    <h2 style="margin-bottom:1.5rem">Por melhores condições de trabalho e de exercício da profissão</h2>
-    <p>O Sindicato dos Psicólogos do Estado do Ceará - PSINDCE - é uma organização de base estadual que representa os interesses da categoria e da sociedade por serviços de qualidade à população. O Sindicato procura lutar por melhores salários, remuneração condizente com sua formação e por condições adequadas de trabalho em amplo sentido: da jornada às condições que permitam um exercício técnico e ético da profissão.</p>
-    <p style="margin-top:1.125rem">Porém, não se restringe a uma luta corporativista, pois entende que a luta sindical deve abraçar melhores condições de trabalho para toda a classe trabalhadora.</p>
+  <div class="wrap-wide">
+    <div class="rotulo esq"><span>Por que se sindicalizar</span></div>
+    <h2>Vantagens em se sindicalizar</h2>
+
+    <div class="vantagens-grid">
+      <div class="vantagem">
+        <div class="vantagem-icone">
+          <svg viewBox="0 0 24 24"><path d="M12 2 4 5v6c0 5 3.5 9 8 11 4.5-2 8-6 8-11V5z"/><path d="m9 12 2 2 4-4"/></svg>
+        </div>
+        <h3>Assistência Jurídica Integral</h3>
+        <p>Assistência jurídica trabalhista integral, com os advogados que prestam assessoria ao PSINDCE. Os nossos advogados, além das orientações gerais, atuam nos contenciosos trabalhistas e dão cobertura integral aos profissionais sindicalizados, sem custo adicional.</p>
+      </div>
+      <div class="vantagem">
+        <div class="vantagem-icone">
+          <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <h3>Negociação Coletiva</h3>
+        <p>Garantia da negociação anual das Convenções Coletivas entre o PSINDCE e as empresas contratantes, assegurando melhores condições de trabalho para toda a categoria.</p>
+      </div>
+      <div class="vantagem">
+        <div class="vantagem-icone">
+          <svg viewBox="0 0 24 24"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C9 2 12 7 12 7z"/></svg>
+        </div>
+        <h3>Convênios Exclusivos</h3>
+        <p>Acesso a benefícios em serviços e produtos com vantagens e descontos exclusivos para associados. Conheça nossos convênios e aproveite as oportunidades!</p>
+      </div>
+    </div>
   </div>
 </section>
 
 <section class="muted">
   <div class="wrap">
-    <div class="rotulo esq"><span>Nossas filiações</span></div>
-    <h2 style="margin-bottom:1.5rem">Articulados com entidades nacionais e estaduais</h2>
-    <p>Para este fim, o PSINDCE está filiado à:</p>
-    <ul class="filiacoes-lista">
-      <li>Confederação Nacional dos Trabalhadores em Seguridade Social (CNTSS)</li>
-      <li>Federação Estadual dos Trabalhadores em Seguridade Social (FETSS)</li>
-      <li>Federação Nacional dos Psicólogos (FENAPSI)</li>
-      <li>Central Única dos Trabalhadores (CUT-CE)</li>
-    </ul>
-    <p>O PSINDCE entende que a luta sindical clássica de corte corporativo tem de estar articulada aos interesses mais amplos da sociedade, como a busca pela democracia universal e participativa, a conquista de direitos que garantam a justiça social amparados por amplas políticas públicas de Estado e a luta contra todas as formas de preconceito, discriminação e violência que ofendam a dignidade humana.</p>
+    <div class="rotulo esq"><span>O que defendemos</span></div>
+    <h2 style="margin-bottom:1.5rem">Nossa Missão</h2>
+    <p>Isso sem falar das nossas constantes lutas por maiores salários, pela redução da jornada de trabalho, por melhores condições de trabalho e a luta por políticas sociais públicas em favor do conjunto da sociedade.</p>
+    <p style="margin-top:1.125rem">O PSINDCE prima pelo diálogo como instrumento de negociação e procura ser a voz dos profissionais de Psicologia no âmbito das questões e reivindicações trabalhistas.</p>
+    <p style="margin-top:1.125rem">Nesse âmbito, o PSINDCE tem um longo percurso de ousadia e coerência na defesa dos interesses da categoria e na luta pela ampliação de nossos direitos.</p>
+    <p style="margin-top:1.125rem"><strong>Sindicato é isso. Compromisso e trabalho.</strong></p>
+
+    <div class="caixa">
+      <h3>Juntos Somos Mais Fortes!</h3>
+      <p style="margin-top:.75rem">Contudo, precisamos destacar que sozinhos não podemos fazer muita coisa. Por isso, convidamos todas(os) profissionais de psicologia do estado do Ceará a somarem suas forças conosco. Afinal, juntos somos mais!</p>
+    </div>
   </div>
 </section>
 
-<section id="equipe">
+<section id="convenios">
   <div class="wrap-wide">
-    <div class="rotulo esq"><span>Nossa equipe</span></div>
-    <h2>Diretoria Colegiada</h2>
+    <div class="rotulo esq"><span>Convênios</span></div>
+    <h2>Fortaleça nossa luta e curta os benefícios!</h2>
+    <p>Quem é sindicalizado no PSINDCE, além de contar com a nossa luta em prol de melhores condições de trabalho, também curta alguns benefícios com nossos parceiros. Basta se associar e apresentar o Cartão do Associado PSINDCE!</p>
+    <p style="margin-top:1.125rem">Para se associar, preencha o formulário de sindicalização e siga as instruções que enviaremos por e-mail. Para quem já é associado, só resta aproveitar!</p>
+    <p style="margin-top:1.125rem">Os nossos convênios são estabelecidos com base em uma política de qualidade, que visa proporcionar com o que há de melhor em vários segmentos. Cada associado já pode contar com uma rede de benefícios, que aos poucos se estenderá para todo o Ceará.</p>
 
-    <div class="equipe-grid">
-      <div class="membro">
-        <div class="membro-avatar">CC</div>
-        <div class="membro-cargo">Coordenação Geral</div>
-        <h3>Claudemir Campos</h3>
-        <p class="membro-crp">CRP 11/14061</p>
-      </div>
-      <div class="membro">
-        <div class="membro-avatar">FO</div>
-        <div class="membro-cargo">Coordenação de Comunicação</div>
-        <h3>Fernando de Oliveira</h3>
-        <p class="membro-crp">CRP 11/11607</p>
-      </div>
-      <div class="membro">
-        <div class="membro-avatar">RL</div>
-        <div class="membro-cargo">Coordenação Administrativa</div>
-        <h3>Rozelir Lima</h3>
-        <p class="membro-crp">CRP 11/18978</p>
-      </div>
-      <div class="membro">
-        <div class="membro-avatar">JL</div>
-        <div class="membro-cargo">Coordenação de Políticas</div>
-        <h3>Jorge Luiz</h3>
-        <p class="membro-crp">CRP 11/08046</p>
-      </div>
-      <div class="membro">
-        <div class="membro-avatar">AW</div>
-        <div class="membro-cargo">Coordenação de Formação</div>
-        <h3>Antonio Walesson</h3>
-        <p class="membro-crp">CRP 11/13625</p>
-      </div>
-      <div class="membro">
-        <div class="membro-avatar">HO</div>
-        <div class="membro-cargo">Suplente da Coordenação Geral</div>
-        <h3>Helena Oliveira</h3>
-        <p class="membro-crp">CRP 11/14909</p>
-      </div>
+    <h3 style="margin-top:3rem">Confira os convênios já estabelecidos</h3>
+    <div class="convenios-grid">
+      <div class="convenio"><h3>EFC</h3><p class="convenio-sub">Erinaldo Frederico Cruz</p></div>
+      <div class="convenio"><h3>Iarlly Plácido</h3><p class="convenio-sub">Nutricionista</p></div>
+      <div class="convenio"><h3>SESC</h3></div>
+      <div class="convenio"><h3>Instituto Crisálide</h3></div>
     </div>
 
-    <h2 style="margin-top:4rem">Conselho Fiscal</h2>
-    <div class="fiscal-grid">
-      <div class="membro">
-        <div class="membro-avatar">IN</div>
-        <h3>Ivan Nogueira</h3>
-        <p class="membro-crp">CRP 11/15086</p>
-      </div>
-      <div class="membro">
-        <div class="membro-avatar">FR</div>
-        <h3>Fúlvio Robert</h3>
-        <p class="membro-crp">CRP 11/03494</p>
-      </div>
+    <div class="caixa">
+      <h3>Mais Convênios em Breve!</h3>
+      <p style="margin-top:.75rem">Fique atenta(o), pois, em breve, estaremos fechando mais convênios e aumentando nossas parcerias!</p>
     </div>
+  </div>
+</section>
+
+<section class="muted">
+  <div class="wrap">
+    <div class="rotulo esq"><span>Cartão do Associado</span></div>
+    <h2 style="margin-bottom:1.5rem">Cartão do Associado PSINDCE</h2>
+    <p>As(os) profissionais devidamente sindicalizadas(os) devem solicitar o seu Cartão do Associado PSINDCE para curtir estes benefícios. Para aqueles que já estão em dia com o sindicato e ainda não têm o cartão, pedimos a gentileza de entrar em contato conosco para providenciar.</p>
+    <p style="margin-top:1.125rem">Destacamos ainda que estes benefícios não interferem nos serviços prestados pelo PSINDCE no que diz respeito a acordos ou negociações coletivas, serviços de revisão contábil para homologações e ações coletivas na Justiça. Para esses casos, os profissionais de psicologia podem contar com as nossas assessorias jurídica e contábil.</p>
   </div>
 </section>
 
