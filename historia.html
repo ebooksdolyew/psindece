@@ -104,13 +104,56 @@
   .marca:hover{color:var(--verde)}
   
   .marca span{font-family:var(--font-display);font-size:1.0625rem;font-weight:800;letter-spacing:-.01em}
-  nav ul{display:flex;gap:1.75rem;list-style:none;align-items:center}
-  nav a{
+  /* Base (mobile e fallback sem JS): mantém o visual de links simples */
+  .pill-list{display:flex;gap:1.75rem;list-style:none;align-items:center;margin:0;padding:0}
+  .pill{
     font-family:var(--font-display);font-size:.8125rem;font-weight:700;letter-spacing:.06em;
     text-transform:uppercase;color:var(--muted-foreground);padding:.5rem 0;display:inline-block;
-    border-bottom:2px solid transparent;
+    border-bottom:2px solid transparent;position:relative;
   }
-  nav a:hover{color:var(--verde);border-bottom-color:var(--accent)}
+  .pill:hover{color:var(--verde);border-bottom-color:var(--accent)}
+  .pill.is-active{color:var(--accent);border-bottom-color:var(--accent)}
+  .pill .hover-circle,.pill .pill-label-hover{display:none}
+
+  /* --- BARRA EM PÍLULAS (efeito PillNav) — só no desktop --- */
+  @media(min-width:901px){
+    .pill-list{
+      --pill-bg:var(--background);
+      --pill-text:var(--verde);
+      --pill-circle:var(--accent);
+      --pill-hover-text:#fff;
+      align-items:stretch;gap:3px;height:42px;padding:3px;
+      background:var(--verde);border-radius:999px;
+    }
+    .pill-list>li{display:flex;height:100%}
+    .pill{
+      display:inline-flex;align-items:center;justify-content:center;
+      height:100%;padding:0 1.125rem;border-bottom:0;overflow:hidden;
+      background:var(--pill-bg);color:var(--pill-text);
+      border-radius:999px;line-height:0;white-space:nowrap;
+    }
+    .pill:hover,.pill.is-active{color:var(--pill-text);border-bottom-color:transparent}
+    .pill .hover-circle{
+      display:block;position:absolute;left:50%;bottom:0;z-index:1;
+      border-radius:50%;background:var(--pill-circle);
+      pointer-events:none;will-change:transform;
+    }
+    .pill .label-stack{position:relative;display:inline-block;line-height:1;z-index:2}
+    .pill .pill-label{position:relative;z-index:2;display:inline-block;line-height:1;will-change:transform}
+    .pill .pill-label-hover{
+      display:inline-block;position:absolute;left:0;top:0;opacity:0;z-index:3;
+      color:var(--pill-hover-text);will-change:transform,opacity;
+    }
+    .pill.is-active .pill-label{color:var(--accent)}
+    .pill.is-active::after{
+      content:"";position:absolute;left:50%;bottom:-6px;transform:translateX(-50%);
+      width:12px;height:12px;border-radius:999px;background:var(--accent);z-index:4;
+    }
+    /* sem GSAP ou com movimento reduzido: preenchimento simples */
+    .no-gsap .pill{transition:background .2s ease-out,color .2s ease-out}
+    .no-gsap .pill:hover{background:var(--pill-circle)}
+    .no-gsap .pill:hover .pill-label{color:var(--pill-hover-text)}
+  }
   .tel-topo{
     font-family:var(--font-display);font-size:.8125rem;font-weight:700;letter-spacing:.03em;
     color:var(--accent);white-space:nowrap;
@@ -316,8 +359,8 @@
       background:var(--background);border-bottom:1px solid var(--border);padding:1rem 1.5rem;
     }
     nav.open{display:block}
-    nav ul{flex-direction:column;align-items:flex-start;gap:.25rem}
-    nav a{padding:.75rem 0;min-height:44px}
+    .pill-list{flex-direction:column;align-items:flex-start;gap:.25rem}
+    .pill{padding:.75rem 0;min-height:44px}
     .menu-btn{display:block}
     .estatuto-grid,.sede-grid,.contato-grid,.cards,.footer-grid{grid-template-columns:1fr}
     .estatuto-nota{position:static}
@@ -346,8 +389,6 @@
   }
 
   /* --- HISTÓRIA: página própria --- */
-  nav a[aria-current="page"]{color:var(--accent);border-bottom-color:var(--accent)}
-
   .historia-hero{
     padding:5.5rem 0 3rem;text-align:left;border-bottom:1px solid var(--border);
   }
@@ -415,11 +456,35 @@
     </a>
     <button class="menu-btn" id="menuBtn" aria-label="Abrir menu" aria-expanded="false" aria-controls="nav">☰</button>
     <nav id="nav">
-      <ul>
-        <li><a href="index.html#topo">Página inicial</a></li>
-        <li><a href="sobre.html">Sobre</a></li>
-        <li><a href="historia.html" aria-current="page">História</a></li>
-        <li><a href="sindicalize-se.html">Sindicalize-se</a></li>
+      <ul class="pill-list">
+        <li><a class="pill" href="index.html#topo">
+          <span class="hover-circle" aria-hidden="true"></span>
+          <span class="label-stack">
+            <span class="pill-label">Página inicial</span>
+            <span class="pill-label-hover" aria-hidden="true">Página inicial</span>
+          </span>
+        </a></li>
+        <li><a class="pill" href="sobre.html">
+          <span class="hover-circle" aria-hidden="true"></span>
+          <span class="label-stack">
+            <span class="pill-label">Sobre</span>
+            <span class="pill-label-hover" aria-hidden="true">Sobre</span>
+          </span>
+        </a></li>
+        <li><a class="pill is-active" href="historia.html" aria-current="page">
+          <span class="hover-circle" aria-hidden="true"></span>
+          <span class="label-stack">
+            <span class="pill-label">História</span>
+            <span class="pill-label-hover" aria-hidden="true">História</span>
+          </span>
+        </a></li>
+        <li><a class="pill" href="sindicalize-se.html">
+          <span class="hover-circle" aria-hidden="true"></span>
+          <span class="label-stack">
+            <span class="pill-label">Sindicalize-se</span>
+            <span class="pill-label-hover" aria-hidden="true">Sindicalize-se</span>
+          </span>
+        </a></li>
       </ul>
     </nav>
     <a class="tel-topo" href="tel:+558532710277">(85) 3271-0277</a>
@@ -551,6 +616,7 @@
   <div class="footer-bottom">psindce.org.br</div>
 </footer>
 
+<script src="vendor/gsap.min.js"></script>
 <script>
   (function(){
     var btn = document.getElementById('menuBtn');
@@ -565,6 +631,103 @@
         btn.setAttribute('aria-expanded','false');
       }
     });
+  })();
+
+  /* --- Efeito PillNav (porte vanilla do componente React Bits) --- */
+  (function(){
+    var reduzido = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!window.gsap || reduzido) {
+      document.documentElement.classList.add('no-gsap');
+      return;
+    }
+
+    var ease   = 'power3.easeOut';
+    var pilulas = [].slice.call(document.querySelectorAll('#nav .pill'));
+    var linhas = [], tweens = [];
+
+    function noDesktop(){ return window.matchMedia('(min-width:901px)').matches; }
+
+    function medir(){
+      pilulas.forEach(function(pilula, i){
+        var circulo = pilula.querySelector('.hover-circle');
+        var rotulo  = pilula.querySelector('.pill-label');
+        var sobre   = pilula.querySelector('.pill-label-hover');
+
+        if (linhas[i]) { linhas[i].kill(); linhas[i] = null; }
+
+        if (!noDesktop() || !circulo) {
+          gsap.set([circulo, rotulo, sobre].filter(Boolean), {clearProps:'all'});
+          return;
+        }
+
+        var caixa = pilula.getBoundingClientRect();
+        var l = caixa.width, a = caixa.height;
+        if (!l || !a) return;
+
+        // raio do círculo que cobre a pílula inteira ao subir a partir da base
+        var R = ((l * l) / 4 + a * a) / (2 * a);
+        var D = Math.ceil(2 * R) + 2;
+        var recuo = Math.ceil(R - Math.sqrt(Math.max(0, R * R - (l * l) / 4))) + 1;
+
+        circulo.style.width  = D + 'px';
+        circulo.style.height = D + 'px';
+        circulo.style.bottom = '-' + recuo + 'px';
+        gsap.set(circulo, {xPercent:-50, scale:0, transformOrigin:'50% ' + (D - recuo) + 'px'});
+
+        if (rotulo) gsap.set(rotulo, {y:0});
+        if (sobre)  gsap.set(sobre,  {y:Math.ceil(a + 100), opacity:0});
+
+        var linha = gsap.timeline({paused:true});
+        linha.to(circulo, {scale:1.2, xPercent:-50, duration:2, ease:ease, overwrite:'auto'}, 0);
+        if (rotulo) linha.to(rotulo, {y:-(a + 8), duration:2, ease:ease, overwrite:'auto'}, 0);
+        if (sobre)  linha.to(sobre,  {y:0, opacity:1, duration:2, ease:ease, overwrite:'auto'}, 0);
+        linhas[i] = linha;
+      });
+    }
+
+    function entrar(i){
+      var linha = linhas[i]; if (!linha) return;
+      if (tweens[i]) tweens[i].kill();
+      tweens[i] = linha.tweenTo(linha.duration(), {duration:.3, ease:ease, overwrite:'auto'});
+    }
+    function sair(i){
+      var linha = linhas[i]; if (!linha) return;
+      if (tweens[i]) tweens[i].kill();
+      tweens[i] = linha.tweenTo(0, {duration:.2, ease:ease, overwrite:'auto'});
+    }
+
+    pilulas.forEach(function(pilula, i){
+      pilula.addEventListener('mouseenter', function(){ entrar(i); });
+      pilula.addEventListener('mouseleave', function(){ sair(i); });
+      pilula.addEventListener('focus',      function(){ entrar(i); });
+      pilula.addEventListener('blur',       function(){ sair(i); });
+    });
+
+    // giro do símbolo da marca ao passar o mouse
+    var marca   = document.querySelector('header .marca');
+    var simbolo = marca && marca.querySelector('.logo-mark');
+    if (simbolo) {
+      var giro;
+      marca.addEventListener('mouseenter', function(){
+        if (giro) giro.kill();
+        gsap.set(simbolo, {rotate:0});
+        giro = gsap.to(simbolo, {rotate:360, duration:.6, ease:ease, overwrite:'auto'});
+      });
+    }
+
+    // revelação da barra ao carregar
+    var lista = document.querySelector('#nav .pill-list');
+    if (noDesktop() && lista) {
+      gsap.set(lista, {width:0, overflow:'hidden'});
+      gsap.to(lista, {width:'auto', duration:.6, ease:ease, clearProps:'width,overflow', onComplete:medir});
+    } else {
+      medir();
+    }
+
+    window.addEventListener('resize', medir);
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(medir).catch(function(){});
+    }
   })();
 </script>
 </body>
