@@ -230,6 +230,25 @@
   }
   .contato-item p{font-size:1rem;word-break:break-word;color:var(--foreground)}
 
+  /* --- REDES SOCIAIS --- */
+  .social-grid{display:flex;flex-wrap:wrap;justify-content:center;gap:1.75rem;margin-top:2.75rem}
+  .social-link{
+    display:flex;flex-direction:column;align-items:center;gap:.875rem;width:9rem;
+    color:var(--verde);transition:transform .2s ease-out;
+  }
+  .social-link:hover{color:var(--accent);transform:translateY(-3px)}
+  .social-icone{
+    width:3.75rem;height:3.75rem;border-radius:50%;
+    background:var(--accent-soft);display:flex;align-items:center;justify-content:center;
+    transition:background .2s ease-out;
+  }
+  .social-link:hover .social-icone{background:var(--accent);}
+  .social-link:hover .social-icone svg{fill:var(--accent-foreground)}
+  .social-icone svg{width:1.5rem;height:1.5rem;fill:var(--accent)}
+  .social-link span:last-child{
+    font-family:var(--font-display);font-size:.875rem;font-weight:700;letter-spacing:.02em;
+  }
+
   /* --- CARDS --- */
   .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:2rem;text-align:left;margin-top:3.25rem}
   .card{
@@ -599,6 +618,36 @@
         </div>
         <p class="form-status" id="formStatus" role="status" hidden></p>
       </form>
+    </div>
+  </div>
+</section>
+
+<!-- REDES SOCIAIS -->
+<section class="muted center" id="redes-sociais">
+  <div class="wrap">
+    <div class="rotulo"><span>Redes sociais</span></div>
+    <h2 class="center">Siga o PSINDCE</h2>
+    <p class="lead center" style="margin:1rem auto 0">Acompanhe nossas publicações, campanhas e novidades nas redes sociais.</p>
+
+    <div class="social-grid">
+      <a class="social-link" href="https://www.facebook.com/psindce" target="_blank" rel="noopener">
+        <span class="social-icone" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M22 12a10 10 0 1 0-11.5 9.87v-6.98H7.9V12h2.6V9.8c0-2.56 1.53-4 3.87-4 1.12 0 2.3.2 2.3.2v2.5h-1.3c-1.28 0-1.68.8-1.68 1.62V12h2.86l-.46 2.89h-2.4v6.98A10 10 0 0 0 22 12"/></svg>
+        </span>
+        <span>Facebook</span>
+      </a>
+      <a class="social-link" href="https://www.instagram.com/psindce_/" target="_blank" rel="noopener">
+        <span class="social-icone" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M12 2c-2.717 0-3.056.012-4.123.06-1.064.05-1.79.217-2.428.465a4.902 4.902 0 0 0-1.772 1.153A4.902 4.902 0 0 0 2.524 5.45c-.247.637-.415 1.363-.465 2.428C2.012 8.944 2 9.283 2 12s.012 3.056.06 4.123c.05 1.064.218 1.79.465 2.428a4.902 4.902 0 0 0 1.153 1.772 4.902 4.902 0 0 0 1.772 1.153c.637.247 1.363.415 2.428.465C8.944 21.988 9.283 22 12 22s3.056-.012 4.123-.06c1.064-.05 1.79-.218 2.428-.465a4.902 4.902 0 0 0 1.772-1.153 4.902 4.902 0 0 0 1.153-1.772c.247-.637.415-1.363.465-2.428.048-1.067.06-1.406.06-4.123s-.012-3.056-.06-4.123c-.05-1.064-.218-1.79-.465-2.428a4.902 4.902 0 0 0-1.153-1.772A4.902 4.902 0 0 0 18.55 2.524c-.637-.247-1.363-.415-2.428-.465C15.056 2.012 14.717 2 12 2zm0 1.802c2.67 0 2.987.01 4.042.059.976.045 1.505.207 1.858.344.466.181.8.398 1.15.748.35.35.566.683.747 1.15.137.353.3.882.344 1.857.048 1.055.058 1.372.058 4.042 0 2.67-.01 2.987-.058 4.042-.045.976-.207 1.505-.344 1.858a3.1 3.1 0 0 1-.748 1.15c-.35.35-.683.566-1.15.747-.353.137-.882.3-1.857.344-1.054.048-1.371.058-4.042.058-2.67 0-2.987-.01-4.042-.058-.976-.045-1.505-.207-1.858-.344a3.1 3.1 0 0 1-1.15-.748 3.1 3.1 0 0 1-.747-1.15c-.137-.353-.3-.882-.344-1.857-.048-1.055-.058-1.372-.058-4.042 0-2.67.01-2.987.058-4.042.045-.976.207-1.505.344-1.858.181-.466.398-.8.748-1.15.35-.35.683-.566 1.15-.747.353-.137.882-.3 1.857-.344 1.055-.048 1.372-.058 4.042-.058zm0 3.063a5.135 5.135 0 1 0 0 10.27 5.135 5.135 0 0 0 0-10.27zm0 8.468a3.333 3.333 0 1 1 0-6.666 3.333 3.333 0 0 1 0 6.666zm6.538-8.671a1.2 1.2 0 1 1-2.4 0 1.2 1.2 0 0 1 2.4 0z"/></svg>
+        </span>
+        <span>Instagram</span>
+      </a>
+      <a class="social-link" href="https://x.com/psindce" target="_blank" rel="noopener">
+        <span class="social-icone" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M13.6 10.6 20.4 3h-1.6l-5.9 6.6L8.1 3H2l7.2 10.2L2.4 21h1.6l6.3-7 5 7h6.1zm-2.2 2.5-.7-1L4.9 4.3h2.5l4.7 6.6.7 1 6.1 8.6h-2.5z"/></svg>
+        </span>
+        <span>X (Twitter)</span>
+      </a>
     </div>
   </div>
 </section>
