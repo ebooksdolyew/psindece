@@ -543,6 +543,13 @@
     body::after{animation:none!important;opacity:.64}
     .btn-whatsapp::after{display:none}
   }
+
+  /* aviso de privacidade (LGPD) no formulário de contato */
+  .form-aviso{
+    font-size:.8125rem;line-height:1.5;color:var(--muted-foreground);
+    max-width:100%;margin:0 0 1.25rem;text-align:left;
+  }
+  .form-aviso a{font-weight:700;text-decoration:underline}
 </style>
 <noscript>
   <style>
@@ -831,6 +838,12 @@
           <label for="mensagem">Mensagem</label>
           <textarea id="mensagem" name="mensagem" required></textarea>
         </div>
+        <p class="form-aviso">
+          Ao clicar em enviar, você será redirecionado ao <strong>WhatsApp</strong> e as
+          informações preenchidas (nome, e-mail e mensagem) serão tratadas por esse aplicativo,
+          exclusivamente para responder ao seu contato, conforme a
+          <abbr title="Lei Geral de Proteção de Dados">LGPD</abbr>.
+        </p>
         <div class="form-botoes">
           <button type="button" id="btnWhatsApp" class="btn btn-whatsapp">Enviar por WhatsApp</button>
         </div>
