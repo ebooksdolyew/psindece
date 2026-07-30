@@ -60,14 +60,48 @@
   body::after{
     content:"";position:fixed;top:-18rem;right:-14rem;width:44rem;height:44rem;z-index:0;
     pointer-events:none;border-radius:50%;filter:blur(120px);
-    background:radial-gradient(circle,rgba(130,26,37,.09),transparent 70%);
+    background:radial-gradient(circle,rgba(130,26,37,.14),transparent 70%);
+    opacity:.64;animation:halo-pulsa 12s ease-in-out infinite;
   }
+  /* pulsação lenta do halo: 9% → 14% de opacidade efetiva */
+  @keyframes halo-pulsa{0%,100%{opacity:.64}50%{opacity:1}}
   header,main,footer{position:relative;z-index:1}
 
   img{max-width:100%;display:block}
   a{color:var(--accent);text-decoration:none;transition:color .2s ease-out}
   a:hover{color:var(--accent-hover)}
   :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:2px}
+
+  /* ==========================================================
+     MOVIMENTO — surgimento ao rolar a página
+     O JS aplica ".in-view" quando o elemento entra na tela.
+     A cascata usa --reveal-delay, definido pelo JS por grupo.
+     ========================================================== */
+  .js-reveal{opacity:0;transform:translateY(24px)}
+  .js-reveal.in-view{
+    animation:revelar .7s cubic-bezier(.22,.61,.36,1) var(--reveal-delay,0s) both;
+  }
+  .js-reveal.reveal-esq{transform:translateX(-28px)}
+  .js-reveal.reveal-esq.in-view{animation-name:revelar-esq}
+  .js-reveal.reveal-dir{transform:translateX(28px)}
+  .js-reveal.reveal-dir.in-view{animation-name:revelar-dir}
+  @keyframes revelar{
+    from{opacity:0;transform:translateY(24px)}
+    to{opacity:1;transform:none}
+  }
+  @keyframes revelar-esq{
+    from{opacity:0;transform:translateX(-28px)}
+    to{opacity:1;transform:none}
+  }
+  @keyframes revelar-dir{
+    from{opacity:0;transform:translateX(28px)}
+    to{opacity:1;transform:none}
+  }
+  /* entrada em sequência do conteúdo do topo da página */
+  @keyframes sobe-fade{
+    from{opacity:0;transform:translateY(20px)}
+    to{opacity:1;transform:none}
+  }
 
   .wrap{max-width:var(--max);margin:0 auto;padding:0 1.5rem}
   .wrap-wide{max-width:var(--max-wide);margin:0 auto;padding:0 1.5rem}
@@ -87,6 +121,12 @@
     letter-spacing:.14em;text-transform:uppercase;color:var(--accent);
   }
   .rotulo.esq::before{display:none}
+  /* os filetes dos dois lados "desenham" quando a seção entra na tela */
+  .rotulo.js-reveal::before,.rotulo.js-reveal::after{
+    transform:scaleX(0);transform-origin:left center;
+    transition:transform .8s cubic-bezier(.22,.61,.36,1) .1s;
+  }
+  .rotulo.js-reveal.in-view::before,.rotulo.js-reveal.in-view::after{transform:scaleX(1)}
 
   .filete{width:100%;height:1px;background:var(--border);border:0;margin:0}
 
@@ -95,11 +135,20 @@
     position:sticky;top:0;z-index:60;
     background:rgba(248,246,243,.93);backdrop-filter:saturate(180%) blur(10px);
     border-bottom:1px solid var(--border);
+    transition:box-shadow .3s ease-out,background-color .3s ease-out;
+  }
+  /* ao rolar, o header encolhe e ganha sombra (classe aplicada via JS) */
+  header.scrolled{
+    background:rgba(248,246,243,.97);
+    box-shadow:0 4px 18px rgba(26,26,26,.08);
   }
   .header-inner{
     display:flex;align-items:center;justify-content:space-between;gap:1.25rem;
     max-width:var(--max-wide);margin:0 auto;padding:.875rem 1.5rem;
+    transition:padding .3s ease-out;
   }
+  header.scrolled .header-inner{padding-top:.5rem;padding-bottom:.5rem}
+  header.scrolled .logo-mark{width:58px;height:36px}
   .marca{display:flex;align-items:center;gap:.875rem;color:var(--verde)}
   .marca:hover{color:var(--verde)}
   
@@ -111,9 +160,16 @@
     text-transform:uppercase;color:var(--muted-foreground);padding:.5rem 0;display:inline-block;
     border-bottom:2px solid transparent;position:relative;
   }
-  .pill:hover{color:var(--verde);border-bottom-color:var(--accent)}
+  .pill:hover{color:var(--verde)}
   .pill.is-active{color:var(--accent);border-bottom-color:var(--accent)}
   .pill .hover-circle,.pill .pill-label-hover{display:none}
+  /* sublinhado que cresce da esquerda para a direita (fora da barra em pílulas) */
+  .pill::before{
+    content:"";position:absolute;left:0;right:0;bottom:-2px;height:2px;
+    background:var(--accent);transform:scaleX(0);transform-origin:left center;
+    transition:transform .28s cubic-bezier(.22,.61,.36,1);
+  }
+  .pill:hover::before{transform:scaleX(1)}
 
   /* --- BARRA EM PÍLULAS (efeito PillNav) — só no desktop --- */
   @media(min-width:901px){
@@ -133,6 +189,7 @@
       border-radius:999px;line-height:0;white-space:nowrap;
     }
     .pill:hover,.pill.is-active{color:var(--pill-text);border-bottom-color:transparent}
+    .pill::before{display:none}
     .pill .hover-circle{
       display:block;position:absolute;left:50%;bottom:0;z-index:1;
       border-radius:50%;background:var(--pill-circle);
@@ -217,12 +274,14 @@
     background:var(--accent);color:var(--accent-foreground);
     border:2px solid var(--accent);box-shadow:var(--shadow-sm);
   }
+  .btn:hover{transform:scale(1.03)}
+  .btn:active{transform:scale(.98)}
   .btn-primary:hover{
     background:var(--accent-hover);border-color:var(--accent-hover);
-    color:var(--accent-foreground);transform:translateY(-2px);
+    color:var(--accent-foreground);transform:translateY(-2px) scale(1.03);
     box-shadow:0 4px 14px rgba(130,26,37,.28);
   }
-  .btn-primary:active{transform:translateY(0)}
+  .btn-primary:active{transform:translateY(0) scale(.98)}
   .btn-outline{background:transparent;color:var(--verde);border:2px solid var(--verde)}
   .btn-outline:hover{background:var(--verde);border-color:var(--verde);color:var(--accent-foreground)}
   .btns{display:flex;gap:1rem;flex-wrap:wrap;margin-top:2.25rem}
@@ -244,6 +303,13 @@
     position:absolute;inset:0;z-index:-2;
     width:100%;height:100%;object-fit:cover;object-position:86% center;
     filter:grayscale(.22) sepia(.10) contrast(.97) brightness(1.03);
+    /* "respiração" contínua da fotografia — zoom + deslocamento sutis */
+    animation:hero-respira 28s ease-in-out infinite;
+  }
+  @keyframes hero-respira{
+    0%{transform:scale(1.04) translate(0,0)}
+    50%{transform:scale(1.1) translate(-1.4%,-1%)}
+    100%{transform:scale(1.04) translate(0,0)}
   }
   .hero::before{
     content:"";position:absolute;inset:0;z-index:-1;
@@ -255,6 +321,26 @@
       rgba(248,246,243,.24) 100%);
   }
   .hero-conteudo{max-width:38rem;text-align:left}
+  /* rótulo, título, texto e botão entram em sequência */
+  .hero-conteudo>*{
+    opacity:0;
+    animation:sobe-fade .8s cubic-bezier(.22,.61,.36,1) both;
+  }
+  .hero-conteudo>.rotulo{animation-delay:.15s}
+  .hero-conteudo>h1{animation-delay:.3s}
+  .hero-conteudo>.lead{animation-delay:.45s}
+  .hero-conteudo>.btns{animation-delay:.6s}
+
+  /* entrada em sequência do conteúdo do topo: rótulo, título, texto e botão */
+  .topo-conteudo>*{
+    opacity:0;
+    animation:sobe-fade .8s cubic-bezier(.22,.61,.36,1) both;
+  }
+  .topo-conteudo>.rotulo{animation-delay:.15s}
+  .topo-conteudo>h1{animation-delay:.3s}
+  .topo-conteudo>.lead{animation-delay:.45s}
+  .topo-conteudo>p{animation-delay:.55s}
+  .topo-conteudo>.btns{animation-delay:.7s}
   .hero h1{margin-bottom:1.5rem}
   .hero h1 em{font-style:normal;color:var(--accent)}
   .hero .lead{max-width:36rem;color:#3F443F}
@@ -293,10 +379,15 @@
   .card{
     background:var(--card);border:1px solid var(--border);border-top:4px solid var(--accent);
     border-radius:14px;overflow:hidden;display:flex;flex-direction:column;
-    box-shadow:var(--shadow-sm);transition:all .2s ease-out;
+    box-shadow:var(--shadow-sm);
+    transition:translate .28s cubic-bezier(.22,.61,.36,1),box-shadow .28s ease-out,border-color .28s ease-out;
   }
   .card:nth-child(2){border-top-color:var(--verde-medio)}
-  .card:hover{box-shadow:var(--shadow-md);border-color:var(--border-hover)}
+  /* usa "translate" (e não "transform") para não brigar com a animação de entrada */
+  .card:hover{
+    box-shadow:var(--shadow-lg);border-color:var(--border-hover);
+    translate:0 -6px;
+  }
   .card img{width:100%;height:15rem;object-fit:contain;background:var(--muted);padding:.75rem}
   .card-body{padding:1.75rem}
   .card-body h3{margin-bottom:.625rem}
@@ -336,13 +427,33 @@
     box-shadow:0 0 0 3px var(--accent-soft);
   }
   textarea{min-height:9.5rem;resize:vertical;line-height:1.7}
-  .form-status{margin-top:1rem;font-size:.875rem;font-weight:700;color:var(--accent)}
+  .form-status{
+    margin-top:1rem;font-size:.875rem;font-weight:700;color:var(--accent);
+    opacity:0;transform:translateY(-6px);
+    transition:opacity .35s ease-out,transform .35s cubic-bezier(.22,.61,.36,1);
+  }
+  .form-status.visivel{opacity:1;transform:none}
   .form-botoes{display:flex;gap:.75rem;flex-wrap:wrap}
   .btn-whatsapp{
+    position:relative;
     background:#25D366;color:#fff;border:none;cursor:pointer;
     display:inline-flex;align-items:center;gap:.5rem;
   }
   .btn-whatsapp:hover{background:#1ebe5a}
+  /* anel verde que expande e desaparece continuamente; pausa no hover */
+  .btn-whatsapp::after{
+    content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+    border:2px solid #25D366;
+    animation:pulso-whats 2.2s cubic-bezier(.22,.61,.36,1) infinite;
+  }
+  .btn-whatsapp:hover::after,.btn-whatsapp:focus-visible::after{
+    animation-play-state:paused;opacity:0;
+  }
+  @keyframes pulso-whats{
+    0%{transform:scale(1);opacity:.6}
+    70%{transform:scale(1.16);opacity:0}
+    100%{transform:scale(1.16);opacity:0}
+  }
   .btn-whatsapp svg{width:1.1em;height:1.1em;fill:currentColor}
 
   /* --- FOOTER --- */
@@ -358,9 +469,12 @@
     padding-bottom:.625rem;border-bottom:2px solid var(--accent);display:inline-block;
   }
   footer ul{list-style:none}
-  footer li a{display:inline-block;padding:.375rem 0}
-  footer a{color:rgba(248,246,243,.75)}
-  footer a:hover{color:#fff}
+  footer li a{padding:.375rem 0}
+  footer a{
+    color:rgba(248,246,243,.75);display:inline-block;
+    transition:color .2s ease-out,translate .2s ease-out;
+  }
+  footer a:hover{color:#fff;translate:3px 0}
   .footer-bottom{
     background:var(--accent);padding:1.125rem 0;text-align:center;
     font-family:var(--font-display);font-size:.75rem;font-weight:700;
@@ -374,6 +488,18 @@
       background:var(--background);border-bottom:1px solid var(--border);padding:1rem 1.5rem;
     }
     nav.open{display:block}
+    /* itens do menu entram em cascata ao abrir */
+    nav.open li{animation:menu-cascata .34s cubic-bezier(.22,.61,.36,1) both}
+    nav.open li:nth-child(1){animation-delay:.03s}
+    nav.open li:nth-child(2){animation-delay:.09s}
+    nav.open li:nth-child(3){animation-delay:.15s}
+    nav.open li:nth-child(4){animation-delay:.21s}
+    nav.open li:nth-child(5){animation-delay:.27s}
+    nav.open li:nth-child(6){animation-delay:.33s}
+    @keyframes menu-cascata{
+      from{opacity:0;transform:translateY(-8px)}
+      to{opacity:1;transform:none}
+    }
     .pill-list{flex-direction:column;align-items:flex-start;gap:.25rem}
     .pill{padding:.75rem 0;min-height:44px}
     .menu-btn{display:block}
@@ -400,7 +526,17 @@
   }
   @media(prefers-reduced-motion:reduce){
     html{scroll-behavior:auto}
-    *,*::before,*::after{transition-duration:.01ms!important;animation-duration:.01ms!important}
+    *,*::before,*::after{
+      transition-duration:.01ms!important;
+      animation-duration:.01ms!important;
+      animation-iteration-count:1!important;
+    }
+    /* nada de movimento: tudo já visível, sem deslocamento */
+    .js-reveal,.hero-conteudo>*,.topo-conteudo>*{opacity:1!important;transform:none!important;animation:none!important}
+    .rotulo.js-reveal::before,.rotulo.js-reveal::after{transform:none!important}
+    .hero-foto{animation:none!important;transform:scale(1.04)}
+    body::after{animation:none!important;opacity:.64}
+    .btn-whatsapp::after{display:none}
   }
 
   /* --- SOBRE: página própria --- */
@@ -418,7 +554,9 @@
     list-style:none;background:var(--card);border:1px solid var(--border);
     border-radius:999px;padding:.5rem 1.125rem;font-size:.875rem;font-weight:700;
     color:var(--verde);font-family:var(--font-display);letter-spacing:.01em;
+    transition:translate .2s ease-out,border-color .2s ease-out;
   }
+  .filiacoes-lista li:hover{border-color:var(--accent);translate:0 -2px}
 
   /* --- EQUIPE --- */
   .equipe-grid{
@@ -427,9 +565,14 @@
   .membro{
     background:var(--card);border:1px solid var(--border);border-top:4px solid var(--accent);
     border-radius:14px;padding:2rem 1.75rem;text-align:center;
-    box-shadow:var(--shadow-sm);transition:all .2s ease-out;
+    box-shadow:var(--shadow-sm);
+    transition:translate .28s cubic-bezier(.22,.61,.36,1),box-shadow .28s ease-out,border-color .28s ease-out;
   }
-  .membro:hover{box-shadow:var(--shadow-md);border-color:var(--border-hover)}
+  /* usa "translate" (e não "transform") para não brigar com a animação de entrada */
+  .membro:hover{
+    box-shadow:var(--shadow-lg);border-color:var(--border-hover);
+    translate:0 -6px;
+  }
   .membro-avatar{
     width:4rem;height:4rem;margin:0 auto 1.125rem;border-radius:50%;
     background:var(--accent-soft);color:var(--accent);
@@ -455,6 +598,14 @@
     .equipe-grid,.fiscal-grid{grid-template-columns:1fr}
   }
 </style>
+<noscript>
+  <style>
+    /* sem JS não há observador de rolagem: tudo permanece visível */
+    .js-reveal{opacity:1;transform:none}
+    .rotulo.js-reveal::before,.rotulo.js-reveal::after{transform:none}
+    .form-status{opacity:1;transform:none}
+  </style>
+</noscript>
 </head>
 <body>
 
@@ -510,7 +661,7 @@
 <main>
 
 <section class="sobre-hero" id="topo">
-  <div class="wrap">
+  <div class="wrap topo-conteudo">
     <div class="rotulo"><span>Quem somos</span></div>
     <h1>Sobre o <em>PSINDCE</em></h1>
     <p class="lead">Conheça a missão, as filiações e a equipe que representa a categoria dos psicólogos e psicólogas do Ceará.</p>
@@ -519,65 +670,65 @@
 
 <section>
   <div class="wrap">
-    <div class="rotulo esq"><span>Nossa missão</span></div>
-    <h2 style="margin-bottom:1.5rem">Por melhores condições de trabalho e de exercício da profissão</h2>
-    <p>O Sindicato dos Psicólogos do Estado do Ceará - PSINDCE - é uma organização de base estadual que representa os interesses da categoria e da sociedade por serviços de qualidade à população. O Sindicato procura lutar por melhores salários, remuneração condizente com sua formação e por condições adequadas de trabalho em amplo sentido: da jornada às condições que permitam um exercício técnico e ético da profissão.</p>
-    <p style="margin-top:1.125rem">Porém, não se restringe a uma luta corporativista, pois entende que a luta sindical deve abraçar melhores condições de trabalho para toda a classe trabalhadora.</p>
+    <div class="rotulo esq js-reveal"><span>Nossa missão</span></div>
+    <h2 class="js-reveal" style="margin-bottom:1.5rem">Por melhores condições de trabalho e de exercício da profissão</h2>
+    <p class="js-reveal">O Sindicato dos Psicólogos do Estado do Ceará - PSINDCE - é uma organização de base estadual que representa os interesses da categoria e da sociedade por serviços de qualidade à população. O Sindicato procura lutar por melhores salários, remuneração condizente com sua formação e por condições adequadas de trabalho em amplo sentido: da jornada às condições que permitam um exercício técnico e ético da profissão.</p>
+    <p class="js-reveal" style="margin-top:1.125rem">Porém, não se restringe a uma luta corporativista, pois entende que a luta sindical deve abraçar melhores condições de trabalho para toda a classe trabalhadora.</p>
   </div>
 </section>
 
 <section class="muted">
   <div class="wrap">
-    <div class="rotulo esq"><span>Nossas filiações</span></div>
-    <h2 style="margin-bottom:1.5rem">Articulados com entidades nacionais e estaduais</h2>
-    <p>Para este fim, o PSINDCE está filiado à:</p>
+    <div class="rotulo esq js-reveal"><span>Nossas filiações</span></div>
+    <h2 class="js-reveal" style="margin-bottom:1.5rem">Articulados com entidades nacionais e estaduais</h2>
+    <p class="js-reveal">Para este fim, o PSINDCE está filiado à:</p>
     <ul class="filiacoes-lista">
-      <li>Confederação Nacional dos Trabalhadores em Seguridade Social (CNTSS)</li>
-      <li>Federação Estadual dos Trabalhadores em Seguridade Social (FETSS)</li>
-      <li>Federação Nacional dos Psicólogos (FENAPSI)</li>
-      <li>Central Única dos Trabalhadores (CUT-CE)</li>
+      <li class="js-reveal">Confederação Nacional dos Trabalhadores em Seguridade Social (CNTSS)</li>
+      <li class="js-reveal">Federação Estadual dos Trabalhadores em Seguridade Social (FETSS)</li>
+      <li class="js-reveal">Federação Nacional dos Psicólogos (FENAPSI)</li>
+      <li class="js-reveal">Central Única dos Trabalhadores (CUT-CE)</li>
     </ul>
-    <p>O PSINDCE entende que a luta sindical clássica de corte corporativo tem de estar articulada aos interesses mais amplos da sociedade, como a busca pela democracia universal e participativa, a conquista de direitos que garantam a justiça social amparados por amplas políticas públicas de Estado e a luta contra todas as formas de preconceito, discriminação e violência que ofendam a dignidade humana.</p>
+    <p class="js-reveal">O PSINDCE entende que a luta sindical clássica de corte corporativo tem de estar articulada aos interesses mais amplos da sociedade, como a busca pela democracia universal e participativa, a conquista de direitos que garantam a justiça social amparados por amplas políticas públicas de Estado e a luta contra todas as formas de preconceito, discriminação e violência que ofendam a dignidade humana.</p>
   </div>
 </section>
 
 <section id="equipe">
   <div class="wrap-wide">
-    <div class="rotulo esq"><span>Nossa equipe</span></div>
-    <h2>Diretoria Colegiada</h2>
+    <div class="rotulo esq js-reveal"><span>Nossa equipe</span></div>
+    <h2 class="js-reveal">Diretoria Colegiada</h2>
 
     <div class="equipe-grid">
-      <div class="membro">
+      <div class="membro js-reveal">
         <div class="membro-avatar">CC</div>
         <div class="membro-cargo">Coordenação Geral</div>
         <h3>Claudemir Campos</h3>
         <p class="membro-crp">CRP 11/14061</p>
       </div>
-      <div class="membro">
+      <div class="membro js-reveal">
         <div class="membro-avatar">FO</div>
         <div class="membro-cargo">Coordenação de Comunicação</div>
         <h3>Fernando de Oliveira</h3>
         <p class="membro-crp">CRP 11/11607</p>
       </div>
-      <div class="membro">
+      <div class="membro js-reveal">
         <div class="membro-avatar">RL</div>
         <div class="membro-cargo">Coordenação Administrativa</div>
         <h3>Rozelir Lima</h3>
         <p class="membro-crp">CRP 11/18978</p>
       </div>
-      <div class="membro">
+      <div class="membro js-reveal">
         <div class="membro-avatar">JL</div>
         <div class="membro-cargo">Coordenação de Políticas</div>
         <h3>Jorge Luiz</h3>
         <p class="membro-crp">CRP 11/08046</p>
       </div>
-      <div class="membro">
+      <div class="membro js-reveal">
         <div class="membro-avatar">AW</div>
         <div class="membro-cargo">Coordenação de Formação</div>
         <h3>Antonio Walesson</h3>
         <p class="membro-crp">CRP 11/13625</p>
       </div>
-      <div class="membro">
+      <div class="membro js-reveal">
         <div class="membro-avatar">HO</div>
         <div class="membro-cargo">Suplente da Coordenação Geral</div>
         <h3>Helena Oliveira</h3>
@@ -585,14 +736,14 @@
       </div>
     </div>
 
-    <h2 style="margin-top:4rem">Conselho Fiscal</h2>
+    <h2 class="js-reveal" style="margin-top:4rem">Conselho Fiscal</h2>
     <div class="fiscal-grid">
-      <div class="membro">
+      <div class="membro js-reveal">
         <div class="membro-avatar">IN</div>
         <h3>Ivan Nogueira</h3>
         <p class="membro-crp">CRP 11/15086</p>
       </div>
-      <div class="membro">
+      <div class="membro js-reveal">
         <div class="membro-avatar">FR</div>
         <h3>Fúlvio Robert</h3>
         <p class="membro-crp">CRP 11/03494</p>
@@ -644,6 +795,54 @@
 
 <script src="vendor/gsap.min.js"></script>
 <script>
+  /* --- MOVIMENTO: header ao rolar + surgimento dos elementos --- */
+  (function(){
+    var reduzido = window.matchMedia
+      && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    /* HEADER: encolhe e ganha sombra ao rolar */
+    var header = document.querySelector('header');
+    var ultimoEstado = null;
+    function atualizaHeader(){
+      var rolou = window.scrollY > 12;
+      if (rolou !== ultimoEstado) {
+        ultimoEstado = rolou;
+        header.classList.toggle('scrolled', rolou);
+      }
+    }
+    atualizaHeader();
+    window.addEventListener('scroll', atualizaHeader, {passive:true});
+
+    /* SURGIMENTO AO ROLAR: cascata por grupo + IntersectionObserver */
+    var grupos = [
+      ['.equipe-grid',     '.membro',            0.10],
+      ['.fiscal-grid',     '.membro',            0.10],
+      ['.filiacoes-lista', 'li',                 0.07]
+    ];
+    grupos.forEach(function(g){
+      Array.prototype.forEach.call(document.querySelectorAll(g[0]), function(container){
+        Array.prototype.forEach.call(container.querySelectorAll(g[1]), function(el, i){
+          el.style.setProperty('--reveal-delay', (i * g[2]).toFixed(2) + 's');
+        });
+      });
+    });
+
+    var alvos = document.querySelectorAll('.js-reveal');
+    if (reduzido || !('IntersectionObserver' in window)) {
+      Array.prototype.forEach.call(alvos, function(el){ el.classList.add('in-view'); });
+    } else {
+      var observador = new IntersectionObserver(function(entradas){
+        entradas.forEach(function(entrada){
+          if (entrada.isIntersecting) {
+            entrada.target.classList.add('in-view');
+            observador.unobserve(entrada.target);
+          }
+        });
+      }, {rootMargin:'0px 0px -10% 0px', threshold:0.12});
+      Array.prototype.forEach.call(alvos, function(el){ observador.observe(el); });
+    }
+  })();
+
   (function(){
     var btn = document.getElementById('menuBtn');
     var nav = document.getElementById('nav');
