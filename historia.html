@@ -60,14 +60,48 @@
   body::after{
     content:"";position:fixed;top:-18rem;right:-14rem;width:44rem;height:44rem;z-index:0;
     pointer-events:none;border-radius:50%;filter:blur(120px);
-    background:radial-gradient(circle,rgba(130,26,37,.09),transparent 70%);
+    background:radial-gradient(circle,rgba(130,26,37,.14),transparent 70%);
+    opacity:.64;animation:halo-pulsa 12s ease-in-out infinite;
   }
+  /* pulsação lenta do halo: 9% → 14% de opacidade efetiva */
+  @keyframes halo-pulsa{0%,100%{opacity:.64}50%{opacity:1}}
   header,main,footer{position:relative;z-index:1}
 
   img{max-width:100%;display:block}
   a{color:var(--accent);text-decoration:none;transition:color .2s ease-out}
   a:hover{color:var(--accent-hover)}
   :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:2px}
+
+  /* ==========================================================
+     MOVIMENTO — surgimento ao rolar a página
+     O JS aplica ".in-view" quando o elemento entra na tela.
+     A cascata usa --reveal-delay, definido pelo JS por grupo.
+     ========================================================== */
+  .js-reveal{opacity:0;transform:translateY(24px)}
+  .js-reveal.in-view{
+    animation:revelar .7s cubic-bezier(.22,.61,.36,1) var(--reveal-delay,0s) both;
+  }
+  .js-reveal.reveal-esq{transform:translateX(-28px)}
+  .js-reveal.reveal-esq.in-view{animation-name:revelar-esq}
+  .js-reveal.reveal-dir{transform:translateX(28px)}
+  .js-reveal.reveal-dir.in-view{animation-name:revelar-dir}
+  @keyframes revelar{
+    from{opacity:0;transform:translateY(24px)}
+    to{opacity:1;transform:none}
+  }
+  @keyframes revelar-esq{
+    from{opacity:0;transform:translateX(-28px)}
+    to{opacity:1;transform:none}
+  }
+  @keyframes revelar-dir{
+    from{opacity:0;transform:translateX(28px)}
+    to{opacity:1;transform:none}
+  }
+  /* entrada em sequência do conteúdo do topo da página */
+  @keyframes sobe-fade{
+    from{opacity:0;transform:translateY(20px)}
+    to{opacity:1;transform:none}
+  }
 
   .wrap{max-width:var(--max);margin:0 auto;padding:0 1.5rem}
   .wrap-wide{max-width:var(--max-wide);margin:0 auto;padding:0 1.5rem}
@@ -87,6 +121,12 @@
     letter-spacing:.14em;text-transform:uppercase;color:var(--accent);
   }
   .rotulo.esq::before{display:none}
+  /* os filetes dos dois lados "desenham" quando a seção entra na tela */
+  .rotulo.js-reveal::before,.rotulo.js-reveal::after{
+    transform:scaleX(0);transform-origin:left center;
+    transition:transform .8s cubic-bezier(.22,.61,.36,1) .1s;
+  }
+  .rotulo.js-reveal.in-view::before,.rotulo.js-reveal.in-view::after{transform:scaleX(1)}
 
   .filete{width:100%;height:1px;background:var(--border);border:0;margin:0}
 
@@ -95,11 +135,20 @@
     position:sticky;top:0;z-index:60;
     background:rgba(248,246,243,.93);backdrop-filter:saturate(180%) blur(10px);
     border-bottom:1px solid var(--border);
+    transition:box-shadow .3s ease-out,background-color .3s ease-out;
+  }
+  /* ao rolar, o header encolhe e ganha sombra (classe aplicada via JS) */
+  header.scrolled{
+    background:rgba(248,246,243,.97);
+    box-shadow:0 4px 18px rgba(26,26,26,.08);
   }
   .header-inner{
     display:flex;align-items:center;justify-content:space-between;gap:1.25rem;
     max-width:var(--max-wide);margin:0 auto;padding:.875rem 1.5rem;
+    transition:padding .3s ease-out;
   }
+  header.scrolled .header-inner{padding-top:.5rem;padding-bottom:.5rem}
+  header.scrolled .logo-mark{width:58px;height:36px}
   .marca{display:flex;align-items:center;gap:.875rem;color:var(--verde)}
   .marca:hover{color:var(--verde)}
   
@@ -111,9 +160,16 @@
     text-transform:uppercase;color:var(--muted-foreground);padding:.5rem 0;display:inline-block;
     border-bottom:2px solid transparent;position:relative;
   }
-  .pill:hover{color:var(--verde);border-bottom-color:var(--accent)}
+  .pill:hover{color:var(--verde)}
   .pill.is-active{color:var(--accent);border-bottom-color:var(--accent)}
   .pill .hover-circle,.pill .pill-label-hover{display:none}
+  /* sublinhado que cresce da esquerda para a direita (fora da barra em pílulas) */
+  .pill::before{
+    content:"";position:absolute;left:0;right:0;bottom:-2px;height:2px;
+    background:var(--accent);transform:scaleX(0);transform-origin:left center;
+    transition:transform .28s cubic-bezier(.22,.61,.36,1);
+  }
+  .pill:hover::before{transform:scaleX(1)}
 
   /* --- BARRA EM PÍLULAS (efeito PillNav) — só no desktop --- */
   @media(min-width:901px){
@@ -133,6 +189,7 @@
       border-radius:999px;line-height:0;white-space:nowrap;
     }
     .pill:hover,.pill.is-active{color:var(--pill-text);border-bottom-color:transparent}
+    .pill::before{display:none}
     .pill .hover-circle{
       display:block;position:absolute;left:50%;bottom:0;z-index:1;
       border-radius:50%;background:var(--pill-circle);
@@ -217,12 +274,14 @@
     background:var(--accent);color:var(--accent-foreground);
     border:2px solid var(--accent);box-shadow:var(--shadow-sm);
   }
+  .btn:hover{transform:scale(1.03)}
+  .btn:active{transform:scale(.98)}
   .btn-primary:hover{
     background:var(--accent-hover);border-color:var(--accent-hover);
-    color:var(--accent-foreground);transform:translateY(-2px);
+    color:var(--accent-foreground);transform:translateY(-2px) scale(1.03);
     box-shadow:0 4px 14px rgba(130,26,37,.28);
   }
-  .btn-primary:active{transform:translateY(0)}
+  .btn-primary:active{transform:translateY(0) scale(.98)}
   .btn-outline{background:transparent;color:var(--verde);border:2px solid var(--verde)}
   .btn-outline:hover{background:var(--verde);border-color:var(--verde);color:var(--accent-foreground)}
   .btns{display:flex;gap:1rem;flex-wrap:wrap;margin-top:2.25rem}
@@ -244,6 +303,13 @@
     position:absolute;inset:0;z-index:-2;
     width:100%;height:100%;object-fit:cover;object-position:86% center;
     filter:grayscale(.22) sepia(.10) contrast(.97) brightness(1.03);
+    /* "respiração" contínua da fotografia — zoom + deslocamento sutis */
+    animation:hero-respira 28s ease-in-out infinite;
+  }
+  @keyframes hero-respira{
+    0%{transform:scale(1.04) translate(0,0)}
+    50%{transform:scale(1.1) translate(-1.4%,-1%)}
+    100%{transform:scale(1.04) translate(0,0)}
   }
   .hero::before{
     content:"";position:absolute;inset:0;z-index:-1;
@@ -255,6 +321,26 @@
       rgba(248,246,243,.24) 100%);
   }
   .hero-conteudo{max-width:38rem;text-align:left}
+  /* rótulo, título, texto e botão entram em sequência */
+  .hero-conteudo>*{
+    opacity:0;
+    animation:sobe-fade .8s cubic-bezier(.22,.61,.36,1) both;
+  }
+  .hero-conteudo>.rotulo{animation-delay:.15s}
+  .hero-conteudo>h1{animation-delay:.3s}
+  .hero-conteudo>.lead{animation-delay:.45s}
+  .hero-conteudo>.btns{animation-delay:.6s}
+
+  /* entrada em sequência do conteúdo do topo: rótulo, título, texto e botão */
+  .topo-conteudo>*{
+    opacity:0;
+    animation:sobe-fade .8s cubic-bezier(.22,.61,.36,1) both;
+  }
+  .topo-conteudo>.rotulo{animation-delay:.15s}
+  .topo-conteudo>h1{animation-delay:.3s}
+  .topo-conteudo>.lead{animation-delay:.45s}
+  .topo-conteudo>p{animation-delay:.55s}
+  .topo-conteudo>.btns{animation-delay:.7s}
   .hero h1{margin-bottom:1.5rem}
   .hero h1 em{font-style:normal;color:var(--accent)}
   .hero .lead{max-width:36rem;color:#3F443F}
@@ -293,10 +379,15 @@
   .card{
     background:var(--card);border:1px solid var(--border);border-top:4px solid var(--accent);
     border-radius:14px;overflow:hidden;display:flex;flex-direction:column;
-    box-shadow:var(--shadow-sm);transition:all .2s ease-out;
+    box-shadow:var(--shadow-sm);
+    transition:translate .28s cubic-bezier(.22,.61,.36,1),box-shadow .28s ease-out,border-color .28s ease-out;
   }
   .card:nth-child(2){border-top-color:var(--verde-medio)}
-  .card:hover{box-shadow:var(--shadow-md);border-color:var(--border-hover)}
+  /* usa "translate" (e não "transform") para não brigar com a animação de entrada */
+  .card:hover{
+    box-shadow:var(--shadow-lg);border-color:var(--border-hover);
+    translate:0 -6px;
+  }
   .card img{width:100%;height:15rem;object-fit:contain;background:var(--muted);padding:.75rem}
   .card-body{padding:1.75rem}
   .card-body h3{margin-bottom:.625rem}
@@ -336,13 +427,33 @@
     box-shadow:0 0 0 3px var(--accent-soft);
   }
   textarea{min-height:9.5rem;resize:vertical;line-height:1.7}
-  .form-status{margin-top:1rem;font-size:.875rem;font-weight:700;color:var(--accent)}
+  .form-status{
+    margin-top:1rem;font-size:.875rem;font-weight:700;color:var(--accent);
+    opacity:0;transform:translateY(-6px);
+    transition:opacity .35s ease-out,transform .35s cubic-bezier(.22,.61,.36,1);
+  }
+  .form-status.visivel{opacity:1;transform:none}
   .form-botoes{display:flex;gap:.75rem;flex-wrap:wrap}
   .btn-whatsapp{
+    position:relative;
     background:#25D366;color:#fff;border:none;cursor:pointer;
     display:inline-flex;align-items:center;gap:.5rem;
   }
   .btn-whatsapp:hover{background:#1ebe5a}
+  /* anel verde que expande e desaparece continuamente; pausa no hover */
+  .btn-whatsapp::after{
+    content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+    border:2px solid #25D366;
+    animation:pulso-whats 2.2s cubic-bezier(.22,.61,.36,1) infinite;
+  }
+  .btn-whatsapp:hover::after,.btn-whatsapp:focus-visible::after{
+    animation-play-state:paused;opacity:0;
+  }
+  @keyframes pulso-whats{
+    0%{transform:scale(1);opacity:.6}
+    70%{transform:scale(1.16);opacity:0}
+    100%{transform:scale(1.16);opacity:0}
+  }
   .btn-whatsapp svg{width:1.1em;height:1.1em;fill:currentColor}
 
   /* --- FOOTER --- */
@@ -358,9 +469,12 @@
     padding-bottom:.625rem;border-bottom:2px solid var(--accent);display:inline-block;
   }
   footer ul{list-style:none}
-  footer li a{display:inline-block;padding:.375rem 0}
-  footer a{color:rgba(248,246,243,.75)}
-  footer a:hover{color:#fff}
+  footer li a{padding:.375rem 0}
+  footer a{
+    color:rgba(248,246,243,.75);display:inline-block;
+    transition:color .2s ease-out,translate .2s ease-out;
+  }
+  footer a:hover{color:#fff;translate:3px 0}
   .footer-bottom{
     background:var(--accent);padding:1.125rem 0;text-align:center;
     font-family:var(--font-display);font-size:.75rem;font-weight:700;
@@ -374,6 +488,18 @@
       background:var(--background);border-bottom:1px solid var(--border);padding:1rem 1.5rem;
     }
     nav.open{display:block}
+    /* itens do menu entram em cascata ao abrir */
+    nav.open li{animation:menu-cascata .34s cubic-bezier(.22,.61,.36,1) both}
+    nav.open li:nth-child(1){animation-delay:.03s}
+    nav.open li:nth-child(2){animation-delay:.09s}
+    nav.open li:nth-child(3){animation-delay:.15s}
+    nav.open li:nth-child(4){animation-delay:.21s}
+    nav.open li:nth-child(5){animation-delay:.27s}
+    nav.open li:nth-child(6){animation-delay:.33s}
+    @keyframes menu-cascata{
+      from{opacity:0;transform:translateY(-8px)}
+      to{opacity:1;transform:none}
+    }
     .pill-list{flex-direction:column;align-items:flex-start;gap:.25rem}
     .pill{padding:.75rem 0;min-height:44px}
     .menu-btn{display:block}
@@ -400,7 +526,17 @@
   }
   @media(prefers-reduced-motion:reduce){
     html{scroll-behavior:auto}
-    *,*::before,*::after{transition-duration:.01ms!important;animation-duration:.01ms!important}
+    *,*::before,*::after{
+      transition-duration:.01ms!important;
+      animation-duration:.01ms!important;
+      animation-iteration-count:1!important;
+    }
+    /* nada de movimento: tudo já visível, sem deslocamento */
+    .js-reveal,.hero-conteudo>*,.topo-conteudo>*{opacity:1!important;transform:none!important;animation:none!important}
+    .rotulo.js-reveal::before,.rotulo.js-reveal::after{transform:none!important}
+    .hero-foto{animation:none!important;transform:scale(1.04)}
+    body::after{animation:none!important;opacity:.64}
+    .btn-whatsapp::after{display:none}
   }
 
   /* --- HISTÓRIA: página própria --- */
@@ -418,7 +554,13 @@
     content:"";position:absolute;left:50%;top:0;bottom:0;width:2px;
     background:linear-gradient(var(--border),var(--border) 96%,transparent);
     transform:translateX(-50%);z-index:0;
+    transform-origin:top center;transition:scale 1.6s ease-out;
   }
+  .linha-tempo.js-linha::before{scale:1 0}
+  .linha-tempo.js-linha.in-view::before{scale:1 1}
+  /* o contêiner só serve de gatilho para o traço: ele mesmo não se move */
+  .linha-tempo.js-reveal{opacity:1;transform:none}
+  .linha-tempo.js-reveal.in-view{animation:none}
 
   .marco{
     position:relative;z-index:1;text-align:center;margin:3.5rem 0 2.25rem;
@@ -435,9 +577,11 @@
     position:relative;z-index:1;max-width:88%;width:fit-content;
     background:var(--card);border:1px solid var(--border);
     border-radius:20px;padding:1.5rem 1.75rem;margin:1.5rem 0;
-    box-shadow:var(--shadow-sm);transition:box-shadow .2s ease-out,border-color .2s ease-out;
+    box-shadow:var(--shadow-sm);
+    transition:translate .28s cubic-bezier(.22,.61,.36,1),box-shadow .28s ease-out,border-color .28s ease-out;
   }
-  .balao:hover{box-shadow:var(--shadow-md);border-color:var(--border-hover)}
+  /* usa "translate" (e não "transform") para não brigar com a animação de entrada */
+  .balao:hover{box-shadow:var(--shadow-lg);border-color:var(--border-hover);translate:0 -4px}
   .balao p{color:var(--foreground);font-size:.9688rem;line-height:1.75}
 
   .balao--esq{
@@ -460,6 +604,14 @@
     .marco{text-align:left;padding-left:2.75rem}
   }
 </style>
+<noscript>
+  <style>
+    /* sem JS não há observador de rolagem: tudo permanece visível */
+    .js-reveal{opacity:1;transform:none}
+    .rotulo.js-reveal::before,.rotulo.js-reveal::after{transform:none}
+    .form-status{opacity:1;transform:none}
+  </style>
+</noscript>
 </head>
 <body>
 
@@ -515,7 +667,7 @@
 <main>
 
 <section class="historia-hero" id="topo">
-  <div class="wrap">
+  <div class="wrap topo-conteudo">
     <div class="rotulo"><span>Nossa trajetória</span></div>
     <h1>História do <em>PSINDCE</em></h1>
     <p class="lead">Da mobilização que começou em 1993 até os dias atuais: conheça a trajetória do Sindicato dos Psicólogos do Ceará, contada em ordem cronológica.</p>
@@ -523,73 +675,73 @@
 </section>
 
 <section>
-  <div class="wrap linha-tempo">
+  <div class="wrap linha-tempo js-linha js-reveal">
 
-    <div class="marco"><span>Como tudo começou...</span></div>
+    <div class="marco js-reveal"><span>Como tudo começou...</span></div>
 
-    <div class="balao balao--esq">
+    <div class="balao balao--esq js-reveal reveal-esq">
       <p>Tudo começou quando, em 1993, a Federação Nacional dos Psicólogos (FENAPSI) encaminhou uma atividade de mobilização em diversos estados aonde não existiam sindicatos de psicólogos, buscando levar representantes para a Plenária Nacional que acontecia naquele ano em São Paulo. Nesta época, existiam os sindicatos de Alagoas, Espírito Santo, Minas Gerais, São Paulo, Rio de Janeiro, Rio Grande do Sul e Santa Catarina.</p>
     </div>
 
-    <div class="balao balao--dir">
+    <div class="balao balao--dir js-reveal reveal-dir">
       <p>Então, a psicóloga Meire Viana foi convidada à contribuir neste evento, representando o Ceará. Ao retornar, trouxe na bagagem a missão de iniciar um processo de mobilização dos psicólogos e psicólogas no Ceará rumo ao debate sobre a organização sindical.</p>
     </div>
 
-    <div class="balao balao--esq">
+    <div class="balao balao--esq js-reveal reveal-esq">
       <p>Do ponto de vista político sindical, o principal debate ocorria sobre a viabilidade de migração da organização sindical através de Ramos de Atividade, e assim tornava-se importante difundir a reflexão por todos os cantos do Brasil, com vistas a tomada de decisões bem embasadas. Através do movimento político no Sistema Conselhos, em 1992 havia sido definido o Ramo da Saúde para o enquadramento da Psicologia.</p>
     </div>
 
-    <div class="balao balao--dir">
+    <div class="balao balao--dir js-reveal reveal-dir">
       <p>Efetuando um resgate histórico, o grupo que se formou como Comissão Pró-Sindicato (Meire Viana, Maria Osmar Costa, Fátima Vidal e João Vicente), localizaram dados sobre a existência por algum período de uma Associação de Psicólogos do Estado do Ceará. Esta associação não mais estava atuante àquela ocasião, mas foram identificados alguns colegas que fizeram parte da mesma, como a psicóloga Terezinha Elias, que passou então a compor conosco como apoio rumo à fundação do Sindicato no Ceará.</p>
     </div>
 
-    <div class="balao balao--esq">
+    <div class="balao balao--esq js-reveal reveal-esq">
       <p>Em 1995, aconteceu em São Paulo o IV Congresso Nacional da FENAPSI, estando o Ceará presente com duas representantes (Meire Viana e Fátima Vidal). Havia uma demanda da delegação do Nordeste para que a composição da direção executiva da FENAPSI contemplasse uma vaga para um representante desta região. Foi então indicado o nome da psicóloga Meire Viana e também o da psicóloga Fátima Vidal para uma das vagas da Diretoria Nordeste.</p>
     </div>
 
-    <div class="balao balao--dir">
+    <div class="balao balao--dir js-reveal reveal-dir">
       <p>Ampliando o debate sobre a organização sindical nos estados, liderada pela FENAPSI, avaliou-se a importância de inicialmente se consolidar a organização sindical da categoria dos Psicólogos, para num segundo momento avaliar como encaminhar o movimento através dos Ramos de Atividade.</p>
     </div>
 
-    <div class="marco"><span>Fundação do PSINDCE</span></div>
+    <div class="marco js-reveal"><span>Fundação do PSINDCE</span></div>
 
-    <div class="balao balao--esq">
+    <div class="balao balao--esq js-reveal reveal-esq">
       <p>Assim, com o apoio da FENAPSI do ponto de vista político-estrutural e do CRP-11-2º Plenário, apoiando do ponto de vista da divulgação das ações sindicais, em 4 de dezembro de 1995, em Assembléia Estadual, foi fundado o PSINDCE - Sindicato dos Psicólogos do Estado do Ceará, com uma gestão provisória composta por: Meire Viana, Fátima Vidal, Maria Osmar Costa (Amada), João Vicente Menescal, Lirian Mascarenhas, Eduardo Almeida, Gislene Macedo, Maria das Dores Lima e Marinina Gruska. Logo na sua fundação, o PSINDCE definiu sua filiação à FENAPSI.</p>
     </div>
 
-    <div class="balao balao--dir">
+    <div class="balao balao--dir js-reveal reveal-dir">
       <p>O ano de 1996 foi de estruturação e nesta ocasião foi editado o primeiro Boletim PSINDCE, trazendo informações, orientações sindicais e também abrindo o debate sobre assuntos importantes para a categoria, entre eles o piso salarial.</p>
     </div>
 
-    <div class="balao balao--esq">
+    <div class="balao balao--esq js-reveal reveal-esq">
       <p>Em 1997, aconteceu o primeiro processo eleitoral do PSINDCE, sendo eleita a Gestão "ENCONTROS" contendo membros para todos os cargos e promovendo também a filiação do PSINDCE à Central Única dos Trabalhadores (CUT).</p>
     </div>
 
-    <div class="marco"><span>...enquanto isso, o PSINDCE esteve em várias sedes...</span></div>
+    <div class="marco js-reveal"><span>...enquanto isso, o PSINDCE esteve em várias sedes...</span></div>
 
-    <div class="balao balao--dir">
+    <div class="balao balao--dir js-reveal reveal-dir">
       <p>A primeira sede do PSINDCE foi na Av. Santos Dumont, contando com o apoio da FENAPSI na manutenção e do CRP11 (IIº Plenário) com apoio material. Ao longo da história o PSINDCE passou por diversos outros endereços, mas em alguns períodos em que a questão financeira se fez imperiosa, foi importante manter o endereço oficial em Coworking(s) inclusive recentemente, como ocorreu após a reforma trabalhista de 2017.</p>
     </div>
 
-    <div class="marco"><span>... e a história continua...</span></div>
+    <div class="marco js-reveal"><span>... e a história continua...</span></div>
 
-    <div class="balao balao--esq">
+    <div class="balao balao--esq js-reveal reveal-esq">
       <p>Passados vários anos desde sua fundação, as gestões do PSINDCE se sucederam entre conquistas e dificuldades, mas sempre procurando abranger um maior número de profissionais. É importante que se diga que nem sempre foi fácil manter o sindicato em pé, mas, graças à perseverança de alguns, hoje vivemos um momento de maior participação e crescimento.</p>
     </div>
 
-    <div class="balao balao--dir">
+    <div class="balao balao--dir js-reveal reveal-dir">
       <p>A gestão atual vem se encontrando para abrir novos canais de comunicação e ampliar os debates com a sociedade acerca da importância da(o) psicóloga(o). Acreditamos que, mesmo não sendo uma tarefa fácil, não custa nada tentar.</p>
     </div>
 
-    <div class="balao balao--esq">
+    <div class="balao balao--esq js-reveal reveal-esq">
       <p>Para fortalecer e melhorar nossa luta, foi realizado um planejamento estratégico no final de 2012, coordenado pelo diretor Rodrigo Meireles. Com esse planejamento, foi possível rever e redefinir nossas metas, além de repensar nossas estratégias de ação, analisando as dificuldades e reforçando as virtudes. Assim, o PSINDCE entrou em 2013 renovado, com disposição nova, a ponto de participar melhor dos debates e manifestações políticas, junto com a nossa categoria e em sintonia com outras entidades sindicais.</p>
     </div>
 
-    <div class="balao balao--dir">
+    <div class="balao balao--dir js-reveal reveal-dir">
       <p>Iniciamos uma inédita política de convênios, com o lançamento do Cartão do Associado PSINDCE, e também foi possível inaugurar uma fase de comunicação mais intensa, com um novo site e novos canais de comunicação. Além disso, conseguimos voltar a ter uma sede no Centro da cidade de Fortaleza para dar mais acesso a todas(os) as(os) que precisam do sindicato.</p>
     </div>
 
-    <div class="balao balao--esq">
+    <div class="balao balao--esq js-reveal reveal-esq">
       <p>No último ano, acompanhamos momentos de grande tensão entre os trabalhadores da Prefeitura Municipal de Fortaleza por conta da mudança de gestão. O PSINDCE esteve a frente de várias discussões e manifestações, procurando mediar os problemas gerados entre as gestões municipais e os trabalhadores. Os processos ainda continuam e agora queremos ampliar nosso diálogo em outros lugares, principalmente no interior do estado. Esta ampliação permanece ainda um desafio, mas contamos com o apoio de todas(os) as(os) profissionais para que isso aconteça.</p>
     </div>
 
@@ -639,6 +791,50 @@
 
 <script src="vendor/gsap.min.js"></script>
 <script>
+  /* --- MOVIMENTO: header ao rolar + surgimento dos elementos --- */
+  (function(){
+    var reduzido = window.matchMedia
+      && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    /* HEADER: encolhe e ganha sombra ao rolar */
+    var header = document.querySelector('header');
+    var ultimoEstado = null;
+    function atualizaHeader(){
+      var rolou = window.scrollY > 12;
+      if (rolou !== ultimoEstado) {
+        ultimoEstado = rolou;
+        header.classList.toggle('scrolled', rolou);
+      }
+    }
+    atualizaHeader();
+    window.addEventListener('scroll', atualizaHeader, {passive:true});
+
+    /* SURGIMENTO AO ROLAR: cascata por grupo + IntersectionObserver */
+    var grupos = [];
+    grupos.forEach(function(g){
+      Array.prototype.forEach.call(document.querySelectorAll(g[0]), function(container){
+        Array.prototype.forEach.call(container.querySelectorAll(g[1]), function(el, i){
+          el.style.setProperty('--reveal-delay', (i * g[2]).toFixed(2) + 's');
+        });
+      });
+    });
+
+    var alvos = document.querySelectorAll('.js-reveal');
+    if (reduzido || !('IntersectionObserver' in window)) {
+      Array.prototype.forEach.call(alvos, function(el){ el.classList.add('in-view'); });
+    } else {
+      var observador = new IntersectionObserver(function(entradas){
+        entradas.forEach(function(entrada){
+          if (entrada.isIntersecting) {
+            entrada.target.classList.add('in-view');
+            observador.unobserve(entrada.target);
+          }
+        });
+      }, {rootMargin:'0px 0px -10% 0px', threshold:0.12});
+      Array.prototype.forEach.call(alvos, function(el){ observador.observe(el); });
+    }
+  })();
+
   (function(){
     var btn = document.getElementById('menuBtn');
     var nav = document.getElementById('nav');
