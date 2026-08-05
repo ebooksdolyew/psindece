@@ -794,19 +794,20 @@
     margin-left:auto;font-family:var(--font-display);font-size:.75rem;
     font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);
   }
-  .insta-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.625rem}
-  .insta-item{
-    position:relative;aspect-ratio:1;border-radius:8px;overflow:hidden;
-    background:var(--muted);display:block;
+  /* prévias do Instagram: incorporação oficial, um post por cartão */
+  .insta-feed{display:grid;grid-template-columns:repeat(auto-fill,minmax(20rem,1fr));gap:1rem}
+  .insta-card{
+    border:1px solid var(--border);border-radius:12px;overflow:hidden;
+    background:var(--card);box-shadow:var(--shadow-sm);min-height:20rem;
   }
-  .insta-item img{width:100%;height:100%;object-fit:cover;display:block;
-    transition:transform .4s cubic-bezier(.22,.61,.36,1)}
-  .insta-item:hover img{transform:scale(1.07)}
-  .insta-item::after{
-    content:"";position:absolute;inset:0;background:var(--accent);
-    opacity:0;transition:opacity .25s ease-out;
+  .insta-card iframe{width:100%;height:32rem;border:0;display:block}
+  .insta-card .embed-vazio{height:100%;border:0;border-radius:0}
+  .insta-perfil{
+    display:inline-block;margin-top:1.125rem;
+    font-family:var(--font-display);font-size:.8125rem;font-weight:700;
+    letter-spacing:.06em;text-transform:uppercase;color:var(--accent);
   }
-  .insta-item:hover::after{opacity:.22}
+  .insta-perfil:hover{text-decoration:underline;text-underline-offset:3px}
   .fb-caixa{
     border:1px solid var(--border);border-radius:12px;overflow:hidden;
     background:var(--card);box-shadow:var(--shadow-sm);min-height:20rem;
@@ -923,7 +924,6 @@
   }
   @media (max-width:520px){
     .chamada-item{grid-template-columns:4.75rem 1fr;gap:.875rem}
-    .insta-grid{gap:.5rem}
     .encerra{padding:1.75rem}
   }
 
@@ -931,7 +931,7 @@
   @media (prefers-reduced-motion:reduce){
     .agora-fita{animation:none}
     .agora-rotulo::before{animation:none}
-    .destaque img,.materia-foto img,.insta-item img{transition:none}
+    .destaque img,.materia-foto img{transition:none}
   }
 </style>
 </head>
@@ -1298,31 +1298,37 @@
               </div>
 
               <!--
-                GALERIA DO INSTAGRAM
-                O Instagram não oferece feed automático gratuito. Duas saídas:
-                a) manter os cards abaixo e trocar a imagem + link a cada nova postagem; ou
-                b) instalar um serviço de feed (ex.: LightWidget, Elfsight) e colar o iframe aqui.
+                PRÉVIAS DO INSTAGRAM — incorporação oficial de publicação.
+                Cada cartão abaixo mostra um post real do perfil, com foto,
+                legenda e link. Para publicar um post aqui:
+
+                1. Abra a publicação no Instagram e copie o código dela — é o
+                   trecho depois de /p/ no endereço. Em
+                   instagram.com/p/C8xYz12AbCd/ o código é C8xYz12AbCd.
+                2. Troque COLE_O_CODIGO_AQUI, no data-src do cartão, por ele.
+
+                O iframe só é montado quando a seção chega perto da tela, então
+                cartões a mais não pesam no carregamento. Enquanto o código não
+                for preenchido, o cartão vira um aviso e não vai ao ar quebrado.
               -->
-              <div class="insta-grid">
-                <a class="insta-item" href="https://instagram.com/psindce_" target="_blank" rel="noopener">
-                  <img loading="lazy" src="img/noticias/sug-132022---piso-e-jornada.png" data-remoto="https://psindce.org.br/ws/media-library/53f54f8592f0463696e8b36a1d00f571/sug-132022---piso-e-jornada.png" alt="Publicação sobre piso salarial e jornada de 30h">
-                </a>
-                <a class="insta-item" href="https://instagram.com/psindce_" target="_blank" rel="noopener">
-                  <img loading="lazy" src="img/noticias/esperancar.jpg" data-remoto="https://psindce.org.br/ws/media-library/b8db99f05a804a558a9a5e9d76ad1af5/esperancar.jpg" alt="Publicação Esperançar">
-                </a>
-                <a class="insta-item" href="https://instagram.com/psindce_" target="_blank" rel="noopener">
-                  <img loading="lazy" src="img/noticias/convite-psindce.jpg" data-remoto="https://psindce.org.br/ws/media-library/e137b44a4892447298d01e3ce9eb00f2/convite-psindce.jpg" alt="Convite para assembleia">
-                </a>
-                <a class="insta-item" href="https://instagram.com/psindce_" target="_blank" rel="noopener">
-                  <img loading="lazy" src="img/noticias/filiacao-2024-b.jpg" data-remoto="https://psindce.org.br/ws/media-library/a39473a8f85248dcb4094c92ddddab89/filiacao-2024-b.jpg" alt="Campanha associativa 2024">
-                </a>
-                <a class="insta-item" href="https://instagram.com/psindce_" target="_blank" rel="noopener">
-                  <img loading="lazy" src="img/noticias/campanha-filiacao-2.jpg" data-remoto="https://psindce.org.br/ws/media-library/a29019b4e0cc4ebb8e47a7abeb39a847/campanha-filiacao-2.jpg" alt="Campanha de filiação sindical">
-                </a>
-                <a class="insta-item" href="https://instagram.com/psindce_" target="_blank" rel="noopener">
-                  <img loading="lazy" src="img/noticias/edital-publicado.jpg" data-remoto="https://psindce.org.br/ws/media-library/77d48adf8f3d43b2941378f2105fc221/edital-publicado.jpg" alt="Edital das eleições 2024">
-                </a>
+              <div class="insta-feed">
+                <div class="insta-card">
+                  <iframe title="Publicação do PSINDCE no Instagram" loading="lazy"
+                          data-src="https://www.instagram.com/p/COLE_O_CODIGO_AQUI/embed/"
+                          data-aviso="Cole o código da publicação no data-src deste cartão"
+                          scrolling="no" allowtransparency="true"></iframe>
+                </div>
+                <div class="insta-card">
+                  <iframe title="Publicação do PSINDCE no Instagram" loading="lazy"
+                          data-src="https://www.instagram.com/p/COLE_O_CODIGO_AQUI/embed/"
+                          data-aviso="Cole o código da publicação no data-src deste cartão"
+                          scrolling="no" allowtransparency="true"></iframe>
+                </div>
               </div>
+
+              <a class="insta-perfil" href="https://instagram.com/psindce_" target="_blank" rel="noopener">
+                Ver todas as publicações em @psindce_
+              </a>
             </div>
 
             <!-- Facebook -->
@@ -1610,21 +1616,23 @@
       });
     });
 
-    /* --- PODCAST: só carrega o embed do Spotify quando o ID estiver posto
-       e o bloco chegar perto da tela.                                       */
+    /* --- EMBEDS (podcast do Spotify e prévias do Instagram): só entram
+       quando o ID/código estiver posto e o bloco chegar perto da tela.      */
     var todos = [].slice.call(document.querySelectorAll('iframe[data-src]'));
+    var SEM_ID = /COLE_O_(ID|CODIGO)_AQUI/;
 
     // sem ID definido, o iframe vazio vira um bloco de aviso no lugar
-    todos.filter(function(f){ return f.getAttribute('data-src').indexOf('COLE_O_ID_AQUI') !== -1; })
+    todos.filter(function(f){ return SEM_ID.test(f.getAttribute('data-src')); })
       .forEach(function(f){
         var caixa = document.createElement('div');
         caixa.className = 'embed-vazio';
-        caixa.textContent = 'Cole aqui a URL de incorporação do episódio (Spotify)';
+        caixa.textContent = f.getAttribute('data-aviso')
+          || 'Cole aqui a URL de incorporação do episódio (Spotify)';
         f.parentNode.replaceChild(caixa, f);
       });
 
     var embeds = todos.filter(function(f){
-      return f.parentNode && f.getAttribute('data-src').indexOf('COLE_O_ID_AQUI') === -1;
+      return f.parentNode && !SEM_ID.test(f.getAttribute('data-src'));
     });
 
     if (embeds.length) {
