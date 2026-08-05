@@ -1345,10 +1345,14 @@
               <!--
                 FEED DO FACEBOOK — plugin oficial de Página, funciona sem JS.
                 Se o nome da página mudar, ajuste o parâmetro href= abaixo.
+                O plugin do Facebook renderiza o conteúdo internamente na
+                largura pedida via URL — ele não se redimensiona sozinho
+                dentro do iframe. Por isso o src é montado em JS (fim da
+                página), medindo a largura real de .fb-caixa, em vez de vir
+                fixo em 500px aqui no HTML.
               -->
-              <div class="fb-caixa">
+              <div class="fb-caixa" id="fbCaixa" data-fb-href="https://www.facebook.com/psindce">
                 <iframe title="Publicações do PSINDCE no Facebook"
-                        src="https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2Fpsindce&tabs=timeline&width=500&height=420&small_header=true&adapt_container_width=true&hide_cover=false&show_facepile=false"
                         scrolling="no" loading="lazy"
                         allow="clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>
               </div>
@@ -1805,6 +1809,50 @@
 
       grade.textContent = '';
       grade.appendChild(fragmento);
+    });
+  })();
+
+  /* ============================================================
+     CAIXA DO FACEBOOK — ajusta a largura do plugin ao container
+     O plugin de Página do Facebook renderiza seu conteúdo internamente
+     na largura pedida pelo parâmetro width= da URL; ele não se adapta
+     sozinho ao tamanho do iframe (adapt_container_width só funciona no
+     embed via SDK, não neste iframe direto). Sem isso, o conteúdo é
+     desenhado para 500px e fica cortado quando a coluna é mais estreita.
+     Aqui a largura real de .fb-caixa é medida e usada para montar a src.
+     ============================================================ */
+  (function(){
+    var caixa   = document.getElementById('fbCaixa');
+    var iframe  = caixa && caixa.querySelector('iframe');
+    if (!caixa || !iframe) return;
+
+    var href = encodeURIComponent(caixa.getAttribute('data-fb-href') || 'https://www.facebook.com/psindce');
+    var LARGURA_MIN = 180;   // mínimo aceito pelo plugin do Facebook
+    var LARGURA_MAX = 500;   // acima disso o plugin não ganha mais detalhe
+    var larguraAtual = null;
+
+    function montarSrc(largura){
+      return 'https://www.facebook.com/plugins/page.php?href=' + href +
+             '&tabs=timeline&width=' + largura + '&height=420' +
+             '&small_header=true&hide_cover=false&show_facepile=false';
+    }
+
+    function ajustar(){
+      var largura = Math.round(caixa.clientWidth);
+      if (!largura) return;
+      largura = Math.max(LARGURA_MIN, Math.min(LARGURA_MAX, largura));
+      // evita recarregar o iframe por variações mínimas (ex.: barra de rolagem)
+      if (larguraAtual !== null && Math.abs(largura - larguraAtual) < 12) return;
+      larguraAtual = largura;
+      iframe.src = montarSrc(largura);
+    }
+
+    ajustar();
+
+    var reajustar;
+    window.addEventListener('resize', function(){
+      clearTimeout(reajustar);
+      reajustar = setTimeout(ajustar, 250);
     });
   })();
 </script>
