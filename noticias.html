@@ -132,6 +132,9 @@
     background:rgba(248,246,243,.93);backdrop-filter:saturate(180%) blur(10px);
     border-bottom:1px solid var(--border);
     transition:box-shadow .3s ease-out,background-color .3s ease-out;
+    /* o header muda de altura ao encolher; sem isto o navegador reajusta a
+       rolagem para compensar e a barra entra em looping (tremor) */
+    overflow-anchor:none;
   }
   /* ao rolar, o header encolhe e ganha sombra (classe aplicada via JS) */
   header.scrolled{
@@ -1481,17 +1484,35 @@
     var reduzido = window.matchMedia
       && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    /* --- HEADER: encolhe e ganha sombra ao rolar --- */
+    /* --- HEADER: encolhe e ganha sombra ao rolar ---
+       Como o header encolhe de verdade (muda a altura no layout), a âncora de
+       rolagem do navegador corrige a posição alguns pixels para cima logo após
+       a troca de classe. Com um limite único isso derrubava o scroll abaixo do
+       limite, a classe saía, o header crescia de novo e o ciclo se repetia — era
+       o tremor da barra. Por isso usamos dois limites (histerese) bem afastados
+       um do outro, maiores que a variação de altura, e lemos o scroll dentro de
+       um requestAnimationFrame. */
     var header = document.querySelector('header');
-    var ultimoEstado = null;
-    function atualizaHeader(){
-      var rolou = window.scrollY > 12;
-      if (rolou !== ultimoEstado) {
-        ultimoEstado = rolou;
-        header.classList.toggle('scrolled', rolou);
+    var ENTRA = 64;  /* passa a "encolhido" só depois deste ponto */
+    var SAI   = 24;  /* volta ao normal só abaixo deste ponto */
+    var estadoHeader = false;
+    var agendado = false;
+
+    function aplicaHeader(){
+      agendado = false;
+      var y = window.scrollY || window.pageYOffset || 0;
+      var novoEstado = estadoHeader ? (y > SAI) : (y > ENTRA);
+      if (novoEstado !== estadoHeader) {
+        estadoHeader = novoEstado;
+        header.classList.toggle('scrolled', novoEstado);
       }
     }
-    atualizaHeader();
+    function atualizaHeader(){
+      if (agendado) return;
+      agendado = true;
+      requestAnimationFrame(aplicaHeader);
+    }
+    aplicaHeader();
     window.addEventListener('scroll', atualizaHeader, {passive:true});
 
     /* --- SURGIMENTO AO ROLAR --- */
