@@ -732,7 +732,7 @@
 
     <div class="cards">
       <article class="card js-reveal">
-        <img loading="lazy" src="https://psindce.org.br/ws/media-library/53f54f8592f0463696e8b36a1d00f571/sug-132022---piso-e-jornada.png" alt="Em defesa do piso salarial e jornada de 30h">
+        <img loading="lazy" src="img/noticias/sug-132022---piso-e-jornada.png" data-remoto="https://psindce.org.br/ws/media-library/53f54f8592f0463696e8b36a1d00f571/sug-132022---piso-e-jornada.png" alt="Em defesa do piso salarial e jornada de 30h">
         <div class="card-body">
           <h3>Em defesa do piso salarial e jornada 30h</h3>
           <p>Acompanhe o andamento do PL no Portal do Senado.</p>
@@ -740,7 +740,7 @@
       </article>
 
       <article class="card js-reveal">
-        <img loading="lazy" src="https://psindce.org.br/ws/media-library/e137b44a4892447298d01e3ce9eb00f2/convite-psindce.jpg" alt="Convite PSINDCE">
+        <img loading="lazy" src="img/noticias/convite-psindce.jpg" data-remoto="https://psindce.org.br/ws/media-library/e137b44a4892447298d01e3ce9eb00f2/convite-psindce.jpg" alt="Convite PSINDCE">
         <div class="card-body">
           <h3>Lutar é nosso objetivo</h3>
           <p>Participe das mobilizações e assembleias da categoria.</p>
@@ -748,7 +748,7 @@
       </article>
 
       <article class="card js-reveal">
-        <img loading="lazy" src="https://psindce.org.br/ws/media-library/b8db99f05a804a558a9a5e9d76ad1af5/esperancar.jpg" alt="Esperançar">
+        <img loading="lazy" src="img/noticias/esperancar.jpg" data-remoto="https://psindce.org.br/ws/media-library/b8db99f05a804a558a9a5e9d76ad1af5/esperancar.jpg" alt="Esperançar">
         <div class="card-body">
           <h3>Os representantes sozinhos não fazem a luta</h3>
           <p>A força do sindicato vem da participação dos(as) psicólogos(as).</p>
@@ -766,7 +766,7 @@
 
     <div class="cards">
       <article class="card js-reveal">
-        <img loading="lazy" src="https://psindce.org.br/ws/media-library/a39473a8f85248dcb4094c92ddddab89/filiacao-2024-b.jpg" alt="Campanha associativa 2024">
+        <img loading="lazy" src="img/noticias/filiacao-2024-b.jpg" data-remoto="https://psindce.org.br/ws/media-library/a39473a8f85248dcb4094c92ddddab89/filiacao-2024-b.jpg" alt="Campanha associativa 2024">
         <div class="card-body">
           <h3>Campanha associativa 2024</h3>
           <p><a href="https://www.sympla.com.br/psindce-20241-resistencia__2417666" target="_blank" rel="noopener">Filie-se pela plataforma Sympla</a></p>
@@ -775,7 +775,7 @@
       </article>
 
       <article class="card js-reveal">
-        <img loading="lazy" src="https://psindce.org.br/ws/media-library/a29019b4e0cc4ebb8e47a7abeb39a847/campanha-filiacao-2.jpg" alt="Campanha de filiação">
+        <img loading="lazy" src="img/noticias/campanha-filiacao-2.jpg" data-remoto="https://psindce.org.br/ws/media-library/a29019b4e0cc4ebb8e47a7abeb39a847/campanha-filiacao-2.jpg" alt="Campanha de filiação">
         <div class="card-body">
           <h3>Lutar é nosso objetivo</h3>
           <p>Nossas lutas são muitas:</p>
@@ -789,7 +789,7 @@
       </article>
 
       <article class="card js-reveal">
-        <img loading="lazy" src="https://psindce.org.br/ws/media-library/77d48adf8f3d43b2941378f2105fc221/edital-publicado.jpg" alt="Eleições PSINDCE 2024 — edital publicado">
+        <img loading="lazy" src="img/noticias/edital-publicado.jpg" data-remoto="https://psindce.org.br/ws/media-library/77d48adf8f3d43b2941378f2105fc221/edital-publicado.jpg" alt="Eleições PSINDCE 2024 — edital publicado">
         <div class="card-body">
           <h3>Eleições PSINDCE — 2024</h3>
           <p>Momento importante para os(as) psicólogos(as) do Ceará. Acione o <strong>Fale conosco</strong> para solicitar o Estatuto, a regulamentação do processo eleitoral e os formulários relacionados.</p>
@@ -940,17 +940,56 @@
       && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     /* --- HEADER: encolhe e ganha sombra ao rolar --- */
+    /* Ao encolher, o header perde ~12px de altura e o navegador reancora a
+       rolagem — com um limiar único isso devolvia a página para baixo do
+       limiar e a barra ficava piscando. Daí a faixa morta: entra em 96px,
+       só sai em 32px, bem além da variação de altura. */
     var header = document.querySelector('header');
-    var ultimoEstado = null;
-    function atualizaHeader(){
-      var rolou = window.scrollY > 12;
+    var ENTRA = 96, SAI = 32;
+    var ultimoEstado = false;
+    var agendado = false;
+    function aplicaHeader(){
+      agendado = false;
+      var y = window.scrollY;
+      var rolou = ultimoEstado ? y > SAI : y > ENTRA;
       if (rolou !== ultimoEstado) {
         ultimoEstado = rolou;
         header.classList.toggle('scrolled', rolou);
       }
     }
-    atualizaHeader();
+    function atualizaHeader(){
+      if (agendado) return;
+      agendado = true;
+      requestAnimationFrame(aplicaHeader);
+    }
+    aplicaHeader();
     window.addEventListener('scroll', atualizaHeader, {passive:true});
+
+    /* --- IMAGENS: local primeiro, endereço antigo como reserva ------------
+       O src aponta para img/noticias/. Se o arquivo ainda não estiver no
+       repositório, tenta uma vez o endereço antigo guardado em data-remoto;
+       falhando os dois, a moldura vira uma placa da marca.                 */
+    var PLACA = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(
+      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600">' +
+      '<rect width="800" height="600" fill="#0F3A21"/>' +
+      '<text x="400" y="315" text-anchor="middle" fill="#F8F6F3" fill-opacity=".38" ' +
+      'font-family="Georgia,serif" font-size="76" font-weight="700" ' +
+      'letter-spacing="6">PSINDCE</text></svg>');
+
+    Array.prototype.forEach.call(document.querySelectorAll('img[data-remoto]'), function(img){
+      function falhou(){
+        var reserva = img.getAttribute('data-remoto');
+        if (reserva) {
+          img.removeAttribute('data-remoto');
+          img.src = reserva;
+          return;
+        }
+        img.removeEventListener('error', falhou);
+        img.src = PLACA;
+      }
+      img.addEventListener('error', falhou);
+      if (img.complete && img.naturalWidth === 0) falhou();
+    });
 
     /* --- SURGIMENTO AO ROLAR: cascata por grupo + IntersectionObserver --- */
     var grupos = [

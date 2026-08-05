@@ -817,16 +817,29 @@
       && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     /* HEADER: encolhe e ganha sombra ao rolar */
+    /* Ao encolher, o header perde ~12px de altura e o navegador reancora a
+       rolagem — com um limiar único isso devolvia a página para baixo do
+       limiar e a barra ficava piscando. Daí a faixa morta: entra em 96px,
+       só sai em 32px, bem além da variação de altura. */
     var header = document.querySelector('header');
-    var ultimoEstado = null;
-    function atualizaHeader(){
-      var rolou = window.scrollY > 12;
+    var ENTRA = 96, SAI = 32;
+    var ultimoEstado = false;
+    var agendado = false;
+    function aplicaHeader(){
+      agendado = false;
+      var y = window.scrollY;
+      var rolou = ultimoEstado ? y > SAI : y > ENTRA;
       if (rolou !== ultimoEstado) {
         ultimoEstado = rolou;
         header.classList.toggle('scrolled', rolou);
       }
     }
-    atualizaHeader();
+    function atualizaHeader(){
+      if (agendado) return;
+      agendado = true;
+      requestAnimationFrame(aplicaHeader);
+    }
+    aplicaHeader();
     window.addEventListener('scroll', atualizaHeader, {passive:true});
 
     /* SURGIMENTO AO ROLAR: cascata por grupo + IntersectionObserver */
