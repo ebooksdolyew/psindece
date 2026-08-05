@@ -1302,28 +1302,34 @@
 
               <!--
                 GALERIA DO INSTAGRAM
-                O Instagram não oferece feed automático gratuito. Duas saídas:
-                a) manter os cards abaixo e trocar a imagem + link a cada nova postagem; ou
-                b) instalar um serviço de feed (ex.: LightWidget, Elfsight) e colar o iframe aqui.
+                Cada post vive em um arquivo próprio dentro de img/grade/ (imagem + link
+                do post). Para publicar uma nova postagem na grade:
+                  1) suba a imagem e o arquivo post_XXXX.html em img/grade/;
+                  2) acrescente o nome do arquivo em data-posts abaixo, na ordem desejada.
+                O script no fim da página lê esses arquivos e preenche a grade sozinho.
+                Os seis cards estáticos abaixo são o conteúdo de partida — servem de
+                fallback caso a leitura dos arquivos falhe (ex.: página aberta via file://).
               -->
-              <div class="insta-grid">
-                <a class="insta-item" href="https://instagram.com/psindce_" target="_blank" rel="noopener">
-                  <img loading="lazy" src="https://psindce.org.br/ws/media-library/53f54f8592f0463696e8b36a1d00f571/sug-132022---piso-e-jornada.png" alt="Publicação sobre piso salarial e jornada de 30h">
+              <div class="insta-grid" id="instaGrade"
+                   data-grade-base="img/grade/"
+                   data-posts="post_DbA4PETO3mU.html,post_DaUEz7auOeH.html,post_DaAeAyouG2Q.html,post_DY7gzgYub0y.html,post_DW7JvAmjnrp.html,post_DYCnG3YlbF2.html">
+                <a class="insta-item" href="https://www.instagram.com/p/DbA4PETO3mU/" target="_blank" rel="noopener">
+                  <img loading="lazy" src="img/grade/post1.png" alt="Publicação do @psindce_ no Instagram">
                 </a>
-                <a class="insta-item" href="https://instagram.com/psindce_" target="_blank" rel="noopener">
-                  <img loading="lazy" src="https://psindce.org.br/ws/media-library/b8db99f05a804a558a9a5e9d76ad1af5/esperancar.jpg" alt="Publicação Esperançar">
+                <a class="insta-item" href="https://www.instagram.com/p/DaUEz7auOeH/" target="_blank" rel="noopener">
+                  <img loading="lazy" src="img/grade/post2.png" alt="Publicação do @psindce_ no Instagram">
                 </a>
-                <a class="insta-item" href="https://instagram.com/psindce_" target="_blank" rel="noopener">
-                  <img loading="lazy" src="https://psindce.org.br/ws/media-library/e137b44a4892447298d01e3ce9eb00f2/convite-psindce.jpg" alt="Convite para assembleia">
+                <a class="insta-item" href="https://www.instagram.com/p/DaAeAyouG2Q/" target="_blank" rel="noopener">
+                  <img loading="lazy" src="img/grade/post3.png" alt="Publicação do @psindce_ no Instagram">
                 </a>
-                <a class="insta-item" href="https://instagram.com/psindce_" target="_blank" rel="noopener">
-                  <img loading="lazy" src="https://psindce.org.br/ws/media-library/a39473a8f85248dcb4094c92ddddab89/filiacao-2024-b.jpg" alt="Campanha associativa 2024">
+                <a class="insta-item" href="https://www.instagram.com/p/DY7gzgYub0y/" target="_blank" rel="noopener">
+                  <img loading="lazy" src="img/grade/post4.png" alt="Publicação do @psindce_ no Instagram">
                 </a>
-                <a class="insta-item" href="https://instagram.com/psindce_" target="_blank" rel="noopener">
-                  <img loading="lazy" src="https://psindce.org.br/ws/media-library/a29019b4e0cc4ebb8e47a7abeb39a847/campanha-filiacao-2.jpg" alt="Campanha de filiação sindical">
+                <a class="insta-item" href="https://www.instagram.com/p/DW7JvAmjnrp/" target="_blank" rel="noopener">
+                  <img loading="lazy" src="img/grade/post5.png" alt="Publicação do @psindce_ no Instagram">
                 </a>
-                <a class="insta-item" href="https://instagram.com/psindce_" target="_blank" rel="noopener">
-                  <img loading="lazy" src="https://psindce.org.br/ws/media-library/77d48adf8f3d43b2941378f2105fc221/edital-publicado.jpg" alt="Edital das eleições 2024">
+                <a class="insta-item" href="https://www.instagram.com/p/DYCnG3YlbF2/" target="_blank" rel="noopener">
+                  <img loading="lazy" src="img/grade/post6.png" alt="Publicação do @psindce_ no Instagram">
                 </a>
               </div>
             </div>
@@ -1717,6 +1723,89 @@
     if (document.fonts && document.fonts.ready) {
       document.fonts.ready.then(medir).catch(function(){});
     }
+  })();
+
+  /* ============================================================
+     GRADE DO INSTAGRAM — lê os posts de img/grade/
+     Cada arquivo img/grade/post_XXXX.html traz a imagem do post e o
+     link para o Instagram. Aqui esses arquivos são buscados, a imagem
+     e o link são extraídos e a grade da aba NOTÍCIAS é montada com eles.
+     Se a busca falhar, os cards estáticos do HTML continuam valendo.
+     ============================================================ */
+  (function(){
+    var grade = document.getElementById('instaGrade');
+    if (!grade || !window.fetch || !window.DOMParser) return;
+
+    var base     = grade.getAttribute('data-grade-base') || 'img/grade/';
+    var arquivos = (grade.getAttribute('data-posts') || '')
+                     .split(',')
+                     .map(function(n){ return n.trim(); })
+                     .filter(Boolean);
+    if (!arquivos.length) return;
+
+    var LIMITE  = 6;                       // a grade mostra 6 posts
+    var parser  = new DOMParser();
+    var origem  = window.location.origin;
+
+    // só aceita permalinks do Instagram como destino do card
+    function linkValido(url){
+      return /^https:\/\/(www\.)?instagram\.com\//i.test(url);
+    }
+    // só aceita imagens do próprio site (a CSP da página exige img-src 'self')
+    function imagemValida(url){
+      return origem === 'null' || url.indexOf(origem + '/') === 0;
+    }
+
+    function lerPost(arquivo){
+      var enderecoPost = new URL(base + arquivo, window.location.href);
+      return fetch(enderecoPost.href, {credentials:'same-origin'})
+        .then(function(r){ return r.ok ? r.text() : Promise.reject(); })
+        .then(function(html){
+          var doc = parser.parseFromString(html, 'text/html');
+          var img = doc.querySelector('.card img') || doc.querySelector('img');
+          var a   = doc.querySelector('.card-footer a[href]') || doc.querySelector('a[href]');
+          if (!img || !a) return null;
+
+          var imagem = new URL(img.getAttribute('src') || '', enderecoPost).href;
+          var link   = a.getAttribute('href') || '';
+          if (!imagemValida(imagem) || !linkValido(link)) return null;
+
+          var alt = (img.getAttribute('alt') || '').trim();
+          return {
+            imagem: imagem,
+            link:   link,
+            alt:    (alt && alt.toLowerCase() !== 'post psindce')
+                      ? alt
+                      : 'Publicação do @psindce_ no Instagram'
+          };
+        })
+        .catch(function(){ return null; });
+    }
+
+    Promise.all(arquivos.slice(0, LIMITE).map(lerPost)).then(function(posts){
+      var validos = posts.filter(Boolean);
+      if (!validos.length) return;         // mantém os cards estáticos
+
+      var fragmento = document.createDocumentFragment();
+      validos.forEach(function(post){
+        var a = document.createElement('a');
+        a.className = 'insta-item';
+        a.href = post.link;
+        a.target = '_blank';
+        a.rel = 'noopener';
+
+        var img = document.createElement('img');
+        img.loading = 'lazy';
+        img.src = post.imagem;
+        img.alt = post.alt;
+
+        a.appendChild(img);
+        fragmento.appendChild(a);
+      });
+
+      grade.textContent = '';
+      grade.appendChild(fragmento);
+    });
   })();
 </script>
 </body>
