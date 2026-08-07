@@ -563,8 +563,11 @@
     display:grid;grid-template-columns:repeat(3,1fr);gap:2rem;margin-top:3.25rem;
   }
   .membro{
-    background:var(--card);border:1px solid var(--border);border-top:4px solid var(--accent);
-    border-radius:14px;padding:2rem 1.75rem;text-align:center;
+    /* proporção idêntica ao retângulo original do card (368×233px medidos no desenho anterior) */
+    position:relative;overflow:hidden;isolation:isolate;
+    aspect-ratio:368/233;background-color:var(--verde-medio);
+    border:1px solid var(--border);border-top:4px solid var(--accent);
+    border-radius:14px;padding:2rem 1.75rem;text-align:center;color:#fff;
     box-shadow:var(--shadow-sm);
     transition:translate .28s cubic-bezier(.22,.61,.36,1),box-shadow .28s ease-out,border-color .28s ease-out;
   }
@@ -573,18 +576,28 @@
     box-shadow:var(--shadow-lg);border-color:var(--border-hover);
     translate:0 -6px;
   }
-  .membro-avatar{
-    width:4rem;height:4rem;margin:0 auto 1.125rem;border-radius:50%;
-    background:var(--accent-soft);color:var(--accent);
-    display:flex;align-items:center;justify-content:center;
-    font-family:var(--font-display);font-weight:800;font-size:1.25rem;
+  /* Foto do integrante — preenche o retângulo do card inteiro, na mesma dimensão da caixa original */
+  .membro-foto-img{
+    position:absolute;inset:0;z-index:0;
+    width:100%;height:100%;object-fit:cover;object-position:center top;
+    transition:transform .5s cubic-bezier(.22,.61,.36,1);
+  }
+  .membro:hover .membro-foto-img{transform:scale(1.045)}
+  /* Véu em verde da marca, mais forte na base — onde ficam nome e CRP — deixando o topo da foto mais livre */
+  .membro::before{
+    content:"";position:absolute;inset:0;z-index:1;
+    background:linear-gradient(180deg,rgba(15,58,33,0) 22%,rgba(15,58,33,.5) 58%,rgba(15,58,33,.88) 100%);
+  }
+  .membro-conteudo{
+    position:relative;z-index:2;height:100%;
+    display:flex;flex-direction:column;justify-content:flex-end;
   }
   .membro-cargo{
     font-family:var(--font-display);font-size:.75rem;font-weight:700;letter-spacing:.1em;
-    text-transform:uppercase;color:var(--accent);margin-bottom:.5rem;
+    text-transform:uppercase;color:#fff;margin-bottom:.5rem;text-shadow:0 1px 4px rgba(0,0,0,.4);
   }
-  .membro h3{margin-bottom:.375rem}
-  .membro-crp{font-size:.875rem;color:var(--muted-foreground)}
+  .membro h3{margin-bottom:.375rem;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.35)}
+  .membro-crp{font-size:.875rem;color:rgba(248,246,243,.92);text-shadow:0 1px 4px rgba(0,0,0,.3)}
 
   .fiscal-grid{
     display:grid;grid-template-columns:repeat(2,1fr);gap:2rem;margin-top:2.5rem;
@@ -706,54 +719,70 @@
 
     <div class="equipe-grid">
       <div class="membro js-reveal">
-        <div class="membro-avatar">CC</div>
-        <div class="membro-cargo">Coordenação Geral</div>
-        <h3>Claudemir Campos</h3>
-        <p class="membro-crp">CRP 11/14061</p>
+        <img class="membro-foto-img" src="https://raw.githubusercontent.com/ebooksdolyew/psindece/main/img/integrantes/claudemir_campos.png" alt="" loading="lazy" decoding="async" onerror="this.remove()">
+        <div class="membro-conteudo">
+          <div class="membro-cargo">Coordenação Geral</div>
+          <h3>Claudemir Campos</h3>
+          <p class="membro-crp">CRP 11/14061</p>
+        </div>
       </div>
       <div class="membro js-reveal">
-        <div class="membro-avatar">FO</div>
-        <div class="membro-cargo">Coordenação de Comunicação</div>
-        <h3>Fernando de Oliveira</h3>
-        <p class="membro-crp">CRP 11/11607</p>
+        <img class="membro-foto-img" src="https://raw.githubusercontent.com/ebooksdolyew/psindece/main/img/integrantes/fernando_de_oliveira.png" alt="" loading="lazy" decoding="async" onerror="this.remove()">
+        <div class="membro-conteudo">
+          <div class="membro-cargo">Coordenação de Comunicação</div>
+          <h3>Fernando de Oliveira</h3>
+          <p class="membro-crp">CRP 11/11607</p>
+        </div>
       </div>
       <div class="membro js-reveal">
-        <div class="membro-avatar">RL</div>
-        <div class="membro-cargo">Coordenação Administrativa</div>
-        <h3>Rozelir Lima</h3>
-        <p class="membro-crp">CRP 11/18978</p>
+        <img class="membro-foto-img" src="https://raw.githubusercontent.com/ebooksdolyew/psindece/main/img/integrantes/rozelir_lima.png" alt="" loading="lazy" decoding="async" onerror="this.remove()">
+        <div class="membro-conteudo">
+          <div class="membro-cargo">Coordenação Administrativa</div>
+          <h3>Rozelir Lima</h3>
+          <p class="membro-crp">CRP 11/18978</p>
+        </div>
       </div>
       <div class="membro js-reveal">
-        <div class="membro-avatar">JL</div>
-        <div class="membro-cargo">Coordenação de Políticas</div>
-        <h3>Jorge Luiz</h3>
-        <p class="membro-crp">CRP 11/08046</p>
+        <img class="membro-foto-img" src="https://raw.githubusercontent.com/ebooksdolyew/psindece/main/img/integrantes/jorge_luiz.png" alt="" loading="lazy" decoding="async" onerror="this.remove()">
+        <div class="membro-conteudo">
+          <div class="membro-cargo">Coordenação de Políticas</div>
+          <h3>Jorge Luiz</h3>
+          <p class="membro-crp">CRP 11/08046</p>
+        </div>
       </div>
       <div class="membro js-reveal">
-        <div class="membro-avatar">AW</div>
-        <div class="membro-cargo">Coordenação de Formação</div>
-        <h3>Antonio Walesson</h3>
-        <p class="membro-crp">CRP 11/13625</p>
+        <img class="membro-foto-img" src="https://raw.githubusercontent.com/ebooksdolyew/psindece/main/img/integrantes/antonio_walesson.png" alt="" loading="lazy" decoding="async" onerror="this.remove()">
+        <div class="membro-conteudo">
+          <div class="membro-cargo">Coordenação de Formação</div>
+          <h3>Antonio Walesson</h3>
+          <p class="membro-crp">CRP 11/13625</p>
+        </div>
       </div>
       <div class="membro js-reveal">
-        <div class="membro-avatar">HO</div>
-        <div class="membro-cargo">Suplente da Coordenação Geral</div>
-        <h3>Helena Oliveira</h3>
-        <p class="membro-crp">CRP 11/14909</p>
+        <img class="membro-foto-img" src="https://raw.githubusercontent.com/ebooksdolyew/psindece/main/img/integrantes/helena_oliveira.png" alt="" loading="lazy" decoding="async" onerror="this.remove()">
+        <div class="membro-conteudo">
+          <div class="membro-cargo">Suplente da Coordenação Geral</div>
+          <h3>Helena Oliveira</h3>
+          <p class="membro-crp">CRP 11/14909</p>
+        </div>
       </div>
     </div>
 
     <h2 class="js-reveal" style="margin-top:4rem">Conselho Fiscal</h2>
     <div class="fiscal-grid">
       <div class="membro js-reveal">
-        <div class="membro-avatar">IN</div>
-        <h3>Ivan Nogueira</h3>
-        <p class="membro-crp">CRP 11/15086</p>
+        <img class="membro-foto-img" src="https://raw.githubusercontent.com/ebooksdolyew/psindece/main/img/integrantes/ivan_nogueira.png" alt="" loading="lazy" decoding="async" onerror="this.remove()">
+        <div class="membro-conteudo">
+          <h3>Ivan Nogueira</h3>
+          <p class="membro-crp">CRP 11/15086</p>
+        </div>
       </div>
       <div class="membro js-reveal">
-        <div class="membro-avatar">FR</div>
-        <h3>Fúlvio Robert</h3>
-        <p class="membro-crp">CRP 11/03494</p>
+        <img class="membro-foto-img" src="https://raw.githubusercontent.com/ebooksdolyew/psindece/main/img/integrantes/fulvio_robert.png" alt="" loading="lazy" decoding="async" onerror="this.remove()">
+        <div class="membro-conteudo">
+          <h3>Fúlvio Robert</h3>
+          <p class="membro-crp">CRP 11/03494</p>
+        </div>
       </div>
     </div>
   </div>
