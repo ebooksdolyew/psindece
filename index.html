@@ -298,7 +298,7 @@
     border-bottom:4px solid var(--accent);
   }
   .hero-foto{
-    position:absolute;inset:0;z-index:-2;
+    position:absolute;inset:0;z-index:-3;
     width:100%;height:100%;object-fit:cover;object-position:86% center;
     filter:grayscale(.22) sepia(.10) contrast(.97) brightness(1.03);
     /* "respiração" contínua da fotografia — zoom + deslocamento sutis */
@@ -310,7 +310,7 @@
     100%{transform:scale(1.04) translate(0,0)}
   }
   .hero::before{
-    content:"";position:absolute;inset:0;z-index:-1;
+    content:"";position:absolute;inset:0;z-index:-2;
     background:linear-gradient(95deg,
       rgba(248,246,243,.96) 0%,
       rgba(248,246,243,.91) 32%,
@@ -333,6 +333,52 @@
   .hero .lead{max-width:36rem;color:#3F443F}
   .hero .rotulo{max-width:38rem}
   .hero .btns{justify-content:flex-start}
+
+  .hero .wrap{position:relative;z-index:1}
+
+  /* --- MARCA CINETICA: grade de logos entre a foto e o texto -------------
+     Terceira camada do heroi. A foto fica em z-index -3, o veu de papel em
+     -2, a grade da marca em -1 e o texto acima de tudo. A mascara horizontal
+     mantem a grade quase apagada onde o titulo se assenta e cheia do lado da
+     fotografia: as tres camadas seguem legiveis ao mesmo tempo.             */
+  .hero-marca{
+    --marca:url("img/logo-lockup.webp");
+    position:absolute;inset:0;z-index:-1;
+    display:flex;align-items:center;justify-content:center;
+    padding-left:36%;
+    overflow:hidden;pointer-events:none;
+    opacity:.30;
+    mix-blend-mode:multiply;
+    -webkit-mask-image:linear-gradient(95deg,
+      rgba(0,0,0,0) 0%,rgba(0,0,0,.06) 26%,rgba(0,0,0,.22) 40%,
+      rgba(0,0,0,.62) 52%,#000 62%,#000 100%);
+    mask-image:linear-gradient(95deg,
+      rgba(0,0,0,0) 0%,rgba(0,0,0,.06) 26%,rgba(0,0,0,.22) 40%,
+      rgba(0,0,0,.62) 52%,#000 62%,#000 100%);
+  }
+  .marca-grade{
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:2.6rem;will-change:transform;
+  }
+  .marca-linha{
+    display:flex;align-items:center;gap:3rem;
+    white-space:nowrap;will-change:transform;
+  }
+  /* posicao de repouso: as fileiras nunca se alinham num bloco chapado --- */
+  .marca-linha:nth-child(1){transform:translateX(33.6px)}
+  .marca-linha:nth-child(2){transform:translateX(-76.8px)}
+  .marca-linha:nth-child(3){transform:translateX(55.2px)}
+  .marca-linha:nth-child(4){transform:translateX(-33.6px)}
+  .marca-linha:nth-child(5){transform:translateX(55.2px)}
+  .marca-linha:nth-child(6){transform:translateX(-76.8px)}
+  .marca-linha:nth-child(7){transform:translateX(33.6px)}
+  .marca-item{
+    flex:none;width:18rem;height:4.56rem;
+    background-image:var(--marca);
+    background-position:center;
+    background-size:contain;
+    background-repeat:no-repeat;
+  }
 
   /* --- ESTATUTO (layout assimétrico + numerais de destaque) --- */
   .estatuto-grid{display:grid;grid-template-columns:1.3fr .7fr;gap:3rem;align-items:start}
@@ -513,6 +559,7 @@
     .estatuto-nota{position:static}
     section{padding:4rem 0}
     .hero{padding:5.5rem 0 4rem}
+    .hero-marca{display:none}
     .hero-foto{object-position:72% center}
     .mapa iframe{height:20rem}
   }
@@ -625,6 +672,17 @@
 <section class="hero" id="topo">
   <img class="hero-foto" src="img/capa/capa.webp" alt="" aria-hidden="true"
        width="1800" height="1013" fetchpriority="high" decoding="async">
+  <div class="hero-marca" aria-hidden="true">
+   <div class="marca-grade">
+    <div class="marca-linha"><span class="marca-item"></span><span class="marca-item"></span><span class="marca-item"></span><span class="marca-item"></span><span class="marca-item"></span></div>
+    <div class="marca-linha"><span class="marca-item"></span><span class="marca-item"></span><span class="marca-item"></span><span class="marca-item"></span><span class="marca-item"></span></div>
+    <div class="marca-linha"><span class="marca-item"></span><span class="marca-item"></span><span class="marca-item"></span><span class="marca-item"></span><span class="marca-item"></span></div>
+    <div class="marca-linha"><span class="marca-item"></span><span class="marca-item"></span><span class="marca-item"></span><span class="marca-item"></span><span class="marca-item"></span></div>
+    <div class="marca-linha"><span class="marca-item"></span><span class="marca-item"></span><span class="marca-item"></span><span class="marca-item"></span><span class="marca-item"></span></div>
+    <div class="marca-linha"><span class="marca-item"></span><span class="marca-item"></span><span class="marca-item"></span><span class="marca-item"></span><span class="marca-item"></span></div>
+    <div class="marca-linha"><span class="marca-item"></span><span class="marca-item"></span><span class="marca-item"></span><span class="marca-item"></span><span class="marca-item"></span></div>
+   </div>
+  </div>
   <div class="wrap">
    <div class="hero-conteudo">
     <div class="rotulo esq"><span>Sindicato dos Psicólogos do Ceará</span></div>
@@ -1073,6 +1131,103 @@
       window.open(url, '_blank');
 
       mostraStatus('Abrindo o WhatsApp para envio…');
+    });
+  })();
+
+  /* --- MARCA CINÉTICA (porte vanilla do KineticTextGrid) -----------------
+     A grade respira num laço só: abre e amplia, o varrimento apaga tudo
+     menos a marca do centro, ela segura sozinha e a grade volta a surgir.
+     Feito com a Web Animations API — não depende do GSAP. Sem JS, ou com
+     movimento reduzido, fica a grade parada que já vem do CSS.            */
+  (function(){
+    var camada = document.querySelector('.hero-marca');
+    if (!camada) return;
+
+    var grade  = camada.querySelector('.marca-grade');
+    var linhas = [].slice.call(camada.querySelectorAll('.marca-linha'));
+    if (!grade || !linhas.length || !grade.animate) return;
+
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (window.matchMedia('(max-width:900px)').matches) return;
+
+    var DESLOCA = 120,   // deslocamento horizontal máximo, em px
+        REPOUSO = 0.4,   // fração do deslocamento com a grade "em casa"
+        ZOOM    = 1.08,
+        MOV     = 1.6,   // duração de cada movimento, em segundos
+        PAUSA   = 2.2;   // tempo que a marca única segura sozinha
+
+    var nLin = linhas.length,            centroL = (nLin - 1) / 2;
+    var nCol = linhas[0].children.length, centroC = (nCol - 1) / 2;
+
+    var tAbre  = MOV,
+        tVarre = tAbre + MOV,
+        tSo    = tVarre + PAUSA,
+        tVolta = tSo + 0.4,
+        tSurge = tVolta + MOV * 0.7,
+        TOTAL  = tSurge + Math.max(0.2, PAUSA * 0.4);
+
+    function n(t){ return t / TOTAL; }
+
+    var ritmo = { duration: TOTAL * 1000, iterations: Infinity };
+    var suave = 'cubic-bezier(.4,0,.2,1)';
+
+    function quadros(prop, valores, tempos){
+      return valores.map(function(valor, i){
+        var q = { offset: tempos[i], easing: suave };
+        q[prop] = valor;
+        return q;
+      });
+    }
+    function desloca(x){ return 'translateX(' + x + 'px)'; }
+
+    /* a grade inteira amplia enquanto abre e volta ao tamanho normal
+       durante o varrimento, para a marca que sobra assentar em escala 1 */
+    grade.animate(quadros('transform',
+      ['scale(1)', 'scale(' + ZOOM + ')', 'scale(1)', 'scale(1)'],
+      [0, n(tAbre), n(tVarre), 1]), ritmo);
+
+    var VISIVEL = 'inset(0% 0% 0% 0%)';
+
+    linhas.forEach(function(linha, i){
+      var eCentro  = i === centroL;
+      var sentido  = i % 2 === 0 ? 1 : -1;
+      var cadencia = 0.7 + (Math.abs(i - centroL) % 3) * 0.45;
+      var cheio    = sentido * DESLOCA * cadencia;
+      var casa     = cheio * REPOUSO;
+
+      /* a fileira do centro passa pelo zero e segura ali sozinha;
+         as outras só vão e voltam entre a casa e o deslocamento cheio */
+      var valores, tempos;
+      if (eCentro) {
+        valores = [casa, cheio, 0, 0, casa, casa];
+        tempos  = [0, n(tAbre), n(tVarre), n(tVolta), n(tSurge), 1];
+      } else {
+        valores = [casa, cheio, cheio, casa, casa];
+        tempos  = [0, n(tAbre), n(tSo), n(tVolta), 1];
+      }
+      linha.animate(quadros('transform', valores.map(desloca), tempos), ritmo);
+
+      var paraDireita = i % 2 === 0;
+      var oculto = paraDireita ? 'inset(0% 0% 0% 100%)' : 'inset(0% 100% 0% 0%)';
+
+      [].slice.call(linha.children).forEach(function(item, j){
+        if (eCentro && j === centroC) return;   // a marca que sobrevive
+
+        // o varrimento atravessa a fileira no sentido dela, uma marca de cada vez
+        var denom = Math.max(1, nCol - 1);
+        var passo = paraDireita ? j / denom : (nCol - 1 - j) / denom;
+
+        var janelaSai = tVarre - tAbre, porSai = janelaSai * 0.5;
+        var saiIni = tAbre + passo * (janelaSai - porSai), saiFim = saiIni + porSai;
+
+        var janelaEntra = tSurge - tVolta, porEntra = janelaEntra * 0.5;
+        var entraIni = tVolta + passo * (janelaEntra - porEntra),
+            entraFim = entraIni + porEntra;
+
+        item.animate(quadros('clipPath',
+          [VISIVEL, VISIVEL, oculto, oculto, VISIVEL, VISIVEL],
+          [0, n(saiIni), n(saiFim), n(entraIni), n(entraFim), 1]), ritmo);
+      });
     });
   })();
 
