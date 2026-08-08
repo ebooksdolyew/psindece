@@ -918,16 +918,7 @@
   .video-quadro.vazio{cursor:default;
     background:repeating-linear-gradient(135deg,var(--verde) 0 12px,#123f25 12px 24px)}
   .video-quadro.vazio:hover .play{transform:translate(0,0) scale(1)}
-  .aviso-vazio,.embed-vazio{
-    font-family:var(--font-display);font-size:.75rem;font-weight:700;
-    letter-spacing:.06em;text-transform:uppercase;
-  }
-  .aviso-vazio{
-    position:absolute;left:0;right:0;bottom:1rem;z-index:2;
-    text-align:center;color:rgba(255,255,255,.72);padding:0 1rem;
-  }
   .embed-vazio{
-    display:flex;align-items:center;justify-content:center;text-align:center;
     min-height:152px;padding:1.25rem;border-radius:12px;
     border:2px dashed var(--border-hover);
     background:var(--muted);color:var(--muted-foreground);
@@ -1637,10 +1628,6 @@
         quadro.insertBefore(capa, quadro.firstChild);
       } else {
         quadro.classList.add('vazio');
-        var aviso = document.createElement('span');
-        aviso.className = 'aviso-vazio';
-        aviso.textContent = 'Cole o ID do vídeo em data-video';
-        quadro.appendChild(aviso);
       }
 
       quadro.addEventListener('click', function(){
@@ -1659,12 +1646,11 @@
        e o bloco chegar perto da tela.                                       */
     var todos = [].slice.call(document.querySelectorAll('iframe[data-src]'));
 
-    // sem ID definido, o iframe vazio vira um bloco de aviso no lugar
+    // sem ID definido, o iframe vazio vira um bloco reservado no lugar
     todos.filter(function(f){ return f.getAttribute('data-src').indexOf('COLE_O_ID_AQUI') !== -1; })
       .forEach(function(f){
         var caixa = document.createElement('div');
         caixa.className = 'embed-vazio';
-        caixa.textContent = 'Cole aqui a URL de incorporação do episódio (Spotify)';
         f.parentNode.replaceChild(caixa, f);
       });
 
