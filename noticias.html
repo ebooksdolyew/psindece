@@ -674,15 +674,15 @@
   .destaque-tags{display:flex;gap:.5rem;flex-wrap:wrap}
 
   /* --- DESTAQUE EM PAINEL: arte inteira em cima, texto embaixo ------------
-     A arte de campanha é quase quadrada, então o retângulo da foto segue a
-     mesma proporção dela (aspect-ratio:683/595) em vez de ficar largo e
-     baixo — assim a peça preenche o card de ponta a ponta, sem sobra de
-     off-white nas laterais nem corte no logo/botão. O texto ocupa uma
-     faixa própria no verde, sem véu por cima.                              */
+     A arte de campanha é quadrada, então o retângulo da foto segue a mesma
+     proporção dela (aspect-ratio:1080/1074) em vez de ficar largo e baixo —
+     assim a peça preenche o card de ponta a ponta, sem sobra de off-white
+     nas laterais nem corte no logo ou na chamada. O texto ocupa uma faixa
+     própria no verde, sem véu por cima.                                    */
   .destaque--painel{display:flex;flex-direction:column;background:var(--verde)}
   .destaque--painel::after{display:none}
   .destaque-foto{
-    flex:0 0 auto;aspect-ratio:683/595;position:relative;overflow:hidden;
+    flex:0 0 auto;aspect-ratio:1080/1074;position:relative;overflow:hidden;
     background:#F8F6F3;
   }
   .destaque--painel .destaque-foto img{
@@ -1060,9 +1060,9 @@
          href="https://www.sympla.com.br/evento-online/renovacao-e-filiacao-do-psindce/3470212"
          target="_blank" rel="noopener">
         <div class="destaque-foto">
-          <img loading="lazy" width="683" height="595"
-               src="img/noticias/destaque1/renovacao-filiacao-2026.webp"
-               alt="Renovação e filiação PSINDCE 2026 — parcele em 12x sem juros, pagamento pela plataforma Sympla">
+          <img loading="lazy" width="1080" height="1074"
+               src="img/noticias/destaque1/renovacao-filiacao-psindce.webp"
+               alt="Renovação e filiação do PSINDCE — fortaleça o Sindicato, fortaleça a Psicologia; renovar e se filiar é investir na categoria e na nossa luta coletiva">
         </div>
         <div class="destaque-txt">
           <div class="destaque-tags">
