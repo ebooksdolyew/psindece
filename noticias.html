@@ -674,19 +674,20 @@
   .destaque-tags{display:flex;gap:.5rem;flex-wrap:wrap}
 
   /* --- DESTAQUE EM PAINEL: arte inteira em cima, texto embaixo ------------
-     A arte de campanha é quase quadrada e o card é deitado: recortá-la
-     comeria o logo do topo e o botão de baixo. Aqui a peça aparece inteira
-     (object-fit:contain) sobre o off-white da marca e o texto ocupa uma
+     A arte de campanha é quase quadrada, então o retângulo da foto segue a
+     mesma proporção dela (aspect-ratio:683/595) em vez de ficar largo e
+     baixo — assim a peça preenche o card de ponta a ponta, sem sobra de
+     off-white nas laterais nem corte no logo/botão. O texto ocupa uma
      faixa própria no verde, sem véu por cima.                              */
   .destaque--painel{display:flex;flex-direction:column;background:var(--verde)}
   .destaque--painel::after{display:none}
   .destaque-foto{
-    flex:1 1 auto;min-height:0;position:relative;overflow:hidden;
+    flex:0 0 auto;aspect-ratio:683/595;position:relative;overflow:hidden;
     background:#F8F6F3;
   }
   .destaque--painel .destaque-foto img{
     position:absolute;inset:0;width:100%;height:100%;
-    object-fit:contain;object-position:center;
+    object-fit:cover;object-position:center;
   }
   .destaque--painel .destaque-txt{
     flex:0 0 auto;height:auto;min-height:0;justify-content:flex-start;
@@ -944,9 +945,7 @@
     .pagina-topo{padding:2.5rem 0 2rem}
     .mosaico{grid-template-columns:1fr;grid-template-rows:none}
     .mosaico>a:first-child{grid-row:auto;min-height:18rem}
-    /* no celular a arte precisa de altura própria para não achatar */
     .mosaico>a.destaque--painel{min-height:0}
-    .destaque--painel .destaque-foto{flex:0 0 auto;aspect-ratio:683/595}
     .materia{grid-template-columns:1fr}
     .videos,.audios,.redes-portal{grid-template-columns:1fr}
     .coluna-lateral{grid-template-columns:1fr}
