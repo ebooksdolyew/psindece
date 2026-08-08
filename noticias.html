@@ -673,6 +673,32 @@
   .mosaico>a:first-child h3{font-size:clamp(1.375rem,2.6vw,1.875rem);line-height:1.2}
   .destaque-tags{display:flex;gap:.5rem;flex-wrap:wrap}
 
+  /* --- DESTAQUE EM PAINEL: arte inteira em cima, texto embaixo ------------
+     A arte de campanha é quadrada, então o retângulo da foto segue a mesma
+     proporção dela (aspect-ratio:1080/1074) em vez de ficar largo e baixo —
+     assim a peça preenche o card de ponta a ponta, sem sobra de off-white
+     nas laterais nem corte no logo ou na chamada. O texto ocupa uma faixa
+     própria no verde, sem véu por cima.                                    */
+  .destaque--painel{display:flex;flex-direction:column;background:var(--verde)}
+  .destaque--painel::after{display:none}
+  .destaque-foto{
+    flex:0 0 auto;aspect-ratio:1080/1074;position:relative;overflow:hidden;
+    background:#F8F6F3;
+  }
+  .destaque--painel .destaque-foto img{
+    position:absolute;inset:0;width:100%;height:100%;
+    object-fit:cover;object-position:center;
+  }
+  .destaque--painel .destaque-txt{
+    flex:0 0 auto;height:auto;min-height:0;justify-content:flex-start;
+  }
+  .mosaico>a.destaque--painel .destaque-txt{padding:1.375rem 2rem 1.625rem}
+  .mosaico>a.destaque--painel h3{font-size:clamp(1.1875rem,2vw,1.4375rem)}
+  .destaque-chamada{
+    color:rgba(255,255,255,.88);font-size:.9375rem;line-height:1.55;max-width:62ch;
+  }
+  .destaque-chamada b{color:#fff;font-weight:700}
+
   /* --- GRADE PRINCIPAL: conteúdo + coluna lateral --- */
   .grade-portal{
     display:grid;grid-template-columns:minmax(0,1fr) 20.5rem;
@@ -919,6 +945,7 @@
     .pagina-topo{padding:2.5rem 0 2rem}
     .mosaico{grid-template-columns:1fr;grid-template-rows:none}
     .mosaico>a:first-child{grid-row:auto;min-height:18rem}
+    .mosaico>a.destaque--painel{min-height:0}
     .materia{grid-template-columns:1fr}
     .videos,.audios,.redes-portal{grid-template-columns:1fr}
     .coluna-lateral{grid-template-columns:1fr}
@@ -1029,17 +1056,29 @@
     <div class="rotulo js-reveal"><span>Em destaque</span></div>
 
     <div class="mosaico">
-      <a class="destaque js-reveal" href="#atividades">
-        <img loading="lazy" src="https://psindce.org.br/ws/media-library/53f54f8592f0463696e8b36a1d00f571/sug-132022---piso-e-jornada.png" alt="">
+      <a class="destaque destaque--painel js-reveal"
+         href="https://www.sympla.com.br/evento-online/renovacao-e-filiacao-do-psindce/3470212"
+         target="_blank" rel="noopener">
+        <div class="destaque-foto">
+          <img loading="lazy" width="1080" height="1074"
+               src="img/noticias/destaque1/renovacao-filiacao-psindce.webp"
+               alt="Renovação e filiação do PSINDCE — fortaleça o Sindicato, fortaleça a Psicologia; renovar e se filiar é investir na categoria e na nossa luta coletiva">
+        </div>
         <div class="destaque-txt">
           <div class="destaque-tags">
-            <span class="editoria">Piso e jornada</span>
-            <span class="data" style="align-self:center">SUG 13/2022</span>
+            <span class="editoria">Filiação</span>
+            <span class="data" style="align-self:center">2026</span>
           </div>
-          <h3>Em defesa do piso salarial e da jornada de 30 horas</h3>
-          <p style="color:rgba(255,255,255,.85);font-size:.9375rem;max-width:36ch">
-          A sugestão legislativa aprovada na Comissão de Direitos Humanos virou o PL 3086/2024.
-          Acompanhe o andamento no Portal do Senado.</p>
+          <h3>Renovação e filiação do PSINDCE</h3>
+          <p class="destaque-chamada">
+          Fortalecer o PSINDCE é fortalecer a luta em defesa da Psicologia e dos direitos
+          da categoria. Ao renovar sua filiação ou se tornar sindicalizado(a), você contribui
+          para a construção de um sindicato mais forte, representativo e preparado para
+          enfrentar os desafios da profissão em nosso estado.</p>
+          <p class="destaque-chamada">
+          A participação de cada psicóloga e psicólogo é fundamental para ampliar as conquistas
+          e fortalecer a organização coletiva. <b>Faça sua renovação ou filie-se ao PSINDCE</b>
+          e siga conosco na defesa da valorização profissional e dos direitos da categoria.</p>
         </div>
       </a>
 
@@ -1483,6 +1522,27 @@
 
 <script src="vendor/gsap.min.js"></script>
 <script>
+  /* --- IMAGEM AUSENTE: cai numa placa da marca em vez de ícone quebrado ---
+     Mesmo recurso já usado na página inicial. Vale para as artes servidas do
+     endereço antigo e para a arte de campanha ainda não publicada no repo.  */
+  (function(){
+    var PLACA = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(
+      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600">' +
+      '<rect width="800" height="600" fill="#0F3A21"/>' +
+      '<text x="400" y="315" text-anchor="middle" fill="#F8F6F3" fill-opacity=".38" ' +
+      'font-family="Georgia,serif" font-size="76" font-weight="700" ' +
+      'letter-spacing="6">PSINDCE</text></svg>');
+
+    Array.prototype.forEach.call(document.images, function(img){
+      function falhou(){
+        img.removeEventListener('error', falhou);
+        img.src = PLACA;
+      }
+      img.addEventListener('error', falhou);
+      if (img.complete && img.naturalWidth === 0) falhou();
+    });
+  })();
+
   (function(){
     var reduzido = window.matchMedia
       && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
